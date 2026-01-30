@@ -1,0 +1,18 @@
+pipelineId: app_mvp
+links:
+  - id: ingest.generic_handoff
+  - id: validate.project_handoff
+  - id: spec.requirements
+  - id: scaffold.project
+  - id: plan.solution_outline
+  - id: spec.api_contracts
+  - id: impl.scaffold_repo
+  - id: impl.generate_patchset
+  - id: gate.patch_approval
+  - id: impl.apply_patchset
+  - id: test.smoke
+  - id: run.pytest # NEW: Actual pytest execution
+  - id: package.project_bundle
+  - id: package.src_diff
+  - id: package.evidence_pack
+  - id: package.release_bundle

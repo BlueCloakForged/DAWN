@@ -1,0 +1,19 @@
+pipelineId: app_iterate
+description: Full iterative development with change control and safety gating.
+links:
+  - id: ingest.generic_handoff
+  - id: validate.project_handoff
+  - id: spec.requirements
+  - id: scaffold.project
+  - id: plan.solution_outline
+  - id: spec.api_contracts
+  - id: impl.scaffold_repo
+  - id: impl.generate_patchset
+  - id: gate.patch_approval
+  - id: impl.apply_patchset
+  - id: test.smoke
+  - id: package.project_bundle
+  - id: package.src_diff
+  - id: package.project_report
+  - id: package.evidence_pack
+  - id: package.release_bundle

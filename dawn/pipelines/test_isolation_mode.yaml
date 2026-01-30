@@ -1,0 +1,12 @@
+# Test Pipeline: Isolation Mode
+# Tests Phase 8.5 - isolation profile enforcement
+#
+# Expected behavior:
+# - test.src_write_isolation attempts to write to src/
+# - In isolation mode: should fail with POLICY_VIOLATION
+# - In normal mode (without whitelist): should also fail with POLICY_VIOLATION
+
+pipelineId: test_isolation_mode
+
+links:
+  - id: test.src_write_isolation

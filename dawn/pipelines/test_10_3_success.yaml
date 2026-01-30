@@ -1,0 +1,7 @@
+pipelineId: test_10_3_success
+links:
+  - id: ingest.generic_handoff
+  - id: test.dummy
+    config:
+      mode: "success"
+  - id: package.project_report

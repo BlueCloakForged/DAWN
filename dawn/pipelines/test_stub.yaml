@@ -1,0 +1,25 @@
+pipelineId: test_stub
+description: "Stub parser pipeline for core acceptance tests (no T2T dependency)"
+links:
+  - id: ingest.project_bundle
+
+  - id: ingest.handoff
+    config:
+      parser: stub
+      stub_confidence: 0.75 # Can be overridden per test
+      stub_flags: [] # Can be overridden per test
+
+  - id: hitl.gate
+    config:
+      mode: BLOCKED
+      auto_threshold: 0.7
+      require_no_flags: true
+
+  - id: validate.json_artifacts
+    config:
+      artifacts_to_validate:
+        - dawn.project.bundle
+        - dawn.project.ir
+        - dawn.hitl.approval
+      enforce_schema_version: true
+      allow_enveloped_payloads: true

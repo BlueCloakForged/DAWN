@@ -1,0 +1,26 @@
+# DAWN (Core) - Requirements
+# Deterministic Auditable Workflow Network
+# Version: 1.0.0
+#
+# Install: pip install -r requirements.txt
+
+# === Core Framework Dependencies ===
+
+# YAML processing for pipeline and configuration files
+PyYAML>=6.0.1
+
+# File locking for concurrent project execution
+filelock>=3.12.0
+
+# Web server framework for Operator Console
+fastapi>=0.104.0
+uvicorn>=0.24.0
+sse-starlette>=1.6.0  # Server-sent events for live log streaming
+pydantic>=2.0.0       # Data validation
+python-multipart>=0.0.6  # Required for file uploads in FastAPI
+
+# JSON schema validation for artifact schemas
+jsonschema>=4.20.0
+
+# === Optional Performance/Monitoring Dependencies ===
+psutil>=5.9.0

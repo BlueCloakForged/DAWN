@@ -1,0 +1,12 @@
+# Test Pipeline: BUDGET_TIMEOUT
+# Tests Phase 8.3.2 - wall time enforcement
+#
+# Expected behavior:
+# - test.sleep_long sleeps for 10s
+# - With max_wall_time_sec: 2, should fail with BUDGET_TIMEOUT
+# - Project lock should be cleanly released
+
+pipelineId: test_budget_timeout
+
+links:
+  - id: test.sleep_long

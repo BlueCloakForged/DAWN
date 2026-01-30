@@ -1,0 +1,19 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: hitl.gate
+  description: "Policy-driven HITL gate bound to bundle_sha256"
+spec:
+  requires:
+    - artifact: dawn.project.ir
+      check: exists
+  produces:
+    - artifact: dawn.hitl.approval
+      schema: json
+  config:
+    mode: BLOCKED # BLOCKED | AUTO | SKIP
+    auto_threshold: 0.7
+    require_no_flags: true # AUTO only if flags empty
+  runtime:
+    timeoutSeconds: 0
+    retries: 0

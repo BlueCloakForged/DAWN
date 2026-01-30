@@ -1,0 +1,3 @@
+pipelineId: run_report_only
+links:
+  - id: package.project_report

@@ -1,0 +1,12 @@
+pipelineId: "default_app_dev"
+links:
+  - id: service.catalog
+  - id: build.ci
+  - id: quality.gates
+  - id: validation.self_heal
+  - id: chain.validator
+overrides:
+  validation.self_heal:
+    spec:
+      runtime:
+        timeoutSeconds: 1200

@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dawn.runtime.agent.protocol",
+  "title": "DAWN Agent Protocol Schema",
+  "description": "JSON Schema for DAWN agent input/output contracts",
+  "version": "1.0.0",
+
+  "definitions": {
+    "artifact_entry": {
+      "type": "object",
+      "required": ["path", "digest", "link_id"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path to the artifact file"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^(sha256:)?[a-f0-9]{64}$",
+          "description": "SHA256 digest of the artifact"
+        },
+        "link_id": {
+          "type": "string",
+          "description": "ID of the link that produced this artifact"
+        }
+      }
+    },
+
+    "error_info": {
+      "type": "object",
+      "required": ["type", "message"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "CONTRACT_VIOLATION",
+            "MISSING_REQUIRED_ARTIFACT",
+            "PRODUCED_ARTIFACT_MISSING",
+            "AMBIGUOUS_ARTIFACT_ORIGIN",
+            "RUNTIME_ERROR",
+            "POLICY_VIOLATION",
+            "SCHEMA_INVALID",
+            "BUDGET_TIMEOUT",
+            "BUDGET_OUTPUT_LIMIT",
+            "BUDGET_PROJECT_LIMIT",
+            "BUDGET_PIPELINE_TIMEOUT"
+          ],
+          "description": "Canonical error type"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "step_id": {
+          "type": "string",
+          "enum": ["validate_inputs", "run", "validate_outputs", "sandbox_check", "budget_check"],
+          "description": "Step where error occurred"
+        }
+      }
+    },
+
+    "link_context": {
+      "type": "object",
+      "required": ["project_id", "pipeline_id", "project_root", "artifact_index"],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "Unique project identifier"
+        },
+        "pipeline_id": {
+          "type": "string",
+          "description": "Pipeline identifier"
+        },
+        "pipeline_run_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique run identifier"
+        },
+        "worker_id": {
+          "type": "string",
+          "pattern": "^.+:\\d+$",
+          "description": "Worker identifier (hostname:pid)"
+        },
+        "project_root": {
+          "type": "string",
+          "description": "Absolute path to project root"
+        },
+        "artifact_index": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/artifact_entry"
+          },
+          "description": "Map of artifactId to artifact info"
+        },
+        "profile": {
+          "type": "string",
+          "enum": ["normal", "isolation"],
+          "default": "normal",
+          "description": "Execution profile"
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "version": {"type": "string"},
+            "digest": {"type": "string"}
+          }
+        }
+      }
+    },
+
+    "link_result": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["SUCCEEDED", "FAILED"],
+          "description": "Execution result status"
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Custom metrics from execution"
+        },
+        "errors": {
+          "$ref": "#/definitions/error_info"
+        }
+      }
+    },
+
+    "ledger_event": {
+      "type": "object",
+      "required": ["timestamp", "project_id", "pipeline_id", "link_id", "run_id", "step_id", "status"],
+      "properties": {
+        "timestamp": {
+          "type": "number",
+          "description": "Unix timestamp with milliseconds"
+        },
+        "project_id": {"type": "string"},
+        "pipeline_id": {"type": "string"},
+        "link_id": {"type": "string"},
+        "run_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "step_id": {
+          "type": "string",
+          "enum": ["link_start", "validate_inputs", "run", "sandbox_check", "validate_outputs", "link_complete", "link_failed", "evaluate_condition", "budget_check"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["STARTED", "SUCCEEDED", "FAILED", "SKIPPED"]
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "outputs": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/artifact_entry"
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "run_id": {"type": "string"},
+            "worker_id": {"type": "string"},
+            "input_signature": {"type": "string"},
+            "duration_ms": {"type": "integer"}
+          },
+          "additionalProperties": true
+        },
+        "errors": {
+          "$ref": "#/definitions/error_info"
+        },
+        "policy_versions": {
+          "type": "object",
+          "properties": {
+            "contractVersion": {"type": "string"},
+            "policyVersion": {"type": "string"},
+            "policyDigest": {"type": "string"},
+            "profile": {"type": "string"}
+          }
+        }
+      }
+    },
+
+    "run_summary": {
+      "type": "object",
+      "required": ["run_id", "worker_id", "project_id", "pipeline_id", "status", "timing"],
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "worker_id": {"type": "string"},
+        "project_id": {"type": "string"},
+        "pipeline_id": {"type": "string"},
+        "pipeline_path": {"type": "string"},
+        "pipeline_digest": {"type": "string"},
+        "profile": {
+          "type": "string",
+          "enum": ["normal", "isolation"]
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "version": {"type": "string"},
+            "digest": {"type": "string"}
+          }
+        },
+        "timing": {
+          "type": "object",
+          "required": ["started_at", "ended_at", "duration_ms"],
+          "properties": {
+            "started_at": {"type": "number"},
+            "ended_at": {"type": "number"},
+            "duration_ms": {"type": "integer"},
+            "lock_wait_time_ms": {"type": "integer"}
+          }
+        },
+        "links": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "duration_ms": {"type": "integer"},
+              "skipped": {"type": "boolean"},
+              "reason": {"type": "string"},
+              "error": {"type": "string"}
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["SUCCEEDED", "FAILED"]
+        },
+        "failure": {
+          "type": ["object", "null"],
+          "properties": {
+            "link_id": {"type": "string"},
+            "error": {"type": "string"}
+          }
+        },
+        "budget_violations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "link_id": {"type": "string"},
+              "type": {"type": "string"},
+              "message": {"type": "string"},
+              "measured_bytes": {"type": "integer"},
+              "limit_bytes": {"type": "integer"}
+            }
+          }
+        }
+      }
+    },
+
+    "lockfile": {
+      "type": "object",
+      "required": ["lockfile_version", "project_id", "policy", "pipeline", "links", "environment"],
+      "properties": {
+        "lockfile_version": {"type": "string"},
+        "generated_at": {"type": "string", "format": "date-time"},
+        "project_id": {"type": "string"},
+        "policy": {
+          "type": "object",
+          "properties": {
+            "version": {"type": "string"},
+            "digest": {"type": "string"},
+            "path": {"type": "string"}
+          }
+        },
+        "pipeline": {
+          "type": "object",
+          "properties": {
+            "path": {"type": "string"},
+            "digest": {"type": "string"},
+            "pipeline_id": {"type": "string"},
+            "link_count": {"type": "integer"}
+          }
+        },
+        "links": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "path": {"type": "string"},
+              "digest": {"type": "string"},
+              "error": {"type": "string"}
+            }
+          }
+        },
+        "environment": {
+          "type": "object",
+          "properties": {
+            "python_version": {"type": "string"},
+            "python_executable": {"type": "string"},
+            "platform": {"type": "string"},
+            "pip_packages": {
+              "type": "object",
+              "additionalProperties": {"type": "string"}
+            },
+            "pip_freeze_hash": {"type": "string"}
+          }
+        },
+        "artifact_digests": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        }
+      }
+    }
+  },
+
+  "oneOf": [
+    {"$ref": "#/definitions/link_context"},
+    {"$ref": "#/definitions/link_result"},
+    {"$ref": "#/definitions/ledger_event"},
+    {"$ref": "#/definitions/run_summary"},
+    {"$ref": "#/definitions/lockfile"}
+  ]
+}

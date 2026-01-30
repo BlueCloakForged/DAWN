@@ -1,0 +1,24 @@
+pipelineId: app_mvp
+description: Initial application scaffolding and blueprinting.
+links:
+  - id: ingest.generic_handoff
+  - id: validate.project_handoff
+  - id: spec.requirements
+  - id: spec.requirements_map
+  - id: scaffold.project
+  - id: plan.solution_outline
+  - id: spec.api_contracts
+  - id: impl.scaffold_repo
+  - id: impl.generate_patchset
+  - id: validate.requirements_coverage
+  - id: validate.json_artifacts
+    config:
+      artifacts_to_validate:
+        - dawn.requirements_map
+        - dawn.patchset
+        - dawn.capabilities_manifest
+        - dawn.requirements_coverage_report
+  - id: impl.apply_patchset
+  - id: test.smoke
+  - id: run.pytest # Execute pytest on uploaded code
+  - id: package.project_bundle

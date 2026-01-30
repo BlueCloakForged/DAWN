@@ -1,0 +1,16 @@
+pipelineId: test_stub_auto_with_flags
+description: "AUTO mode with flags - should BLOCK due to require_no_flags"
+links:
+  - id: ingest.project_bundle
+
+  - id: ingest.handoff
+    config:
+      parser: stub
+      stub_confidence: 0.85 # High confidence
+      stub_flags: ["test_flag"] # Has flags -> should block
+
+  - id: hitl.gate
+    config:
+      mode: AUTO
+      auto_threshold: 0.7
+      require_no_flags: true

@@ -1,0 +1,7 @@
+pipelineId: test_10_3_schema
+links:
+  - id: ingest.generic_handoff
+  - id: test.dummy
+    config:
+      mode: "schema_failure"
+  - id: package.project_report

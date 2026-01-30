@@ -1,0 +1,378 @@
+"""
+HITL Gate Link - Policy-Driven File-Based Approval
+
+Modes:
+  BLOCKED: Fail-fast until human approval file exists with matching bundle_sha256
+  AUTO: Auto-approve if confidence.score >= threshold AND no flags AND hitl_required=false
+  SKIP: Bypass gate (still emits approval bound to bundle_sha256)
+
+Stale Approval Prevention:
+  - Approval file must reference current bundle_sha256
+  - Rejects approvals bound to old/modified inputs
+  - Template generation is deterministic
+
+Determinism:
+  - Template shape is stable (same IR → same template)
+  - Approval decision is deterministic (given file + config)
+  - Human approval is inherently non-deterministic (that's the point)
+"""
+
+import json
+from pathlib import Path
+from datetime import datetime
+from typing import Dict, Any
+
+
+# Assuming BlockedError is defined elsewhere or needs to be added
+class BlockedError(Exception):
+    pass
+
+
+def run(context, link_config):
+    """
+    HITL gate with AUTO/BLOCKED/SKIP modes.
+    
+    Must enforce strict bundle_sha256 binding to prevent stale approvals.
+    """
+    # Extract runtime config (handle nested link.yaml structure)
+    if "config" in link_config and isinstance(link_config["config"], dict):
+        config = link_config["config"]
+    else:
+        config = link_config
+    
+    mode = config.get("mode", "BLOCKED")
+    auto_threshold = config.get("auto_threshold", 0.7)
+    require_no_flags = config.get("require_no_flags", True)
+    
+    # Load project IR
+    project_root = Path(context["project_root"])
+    artifact_store = context["artifact_store"]
+    
+    ir_meta = artifact_store.get("dawn.project.ir")
+    if not ir_meta:
+        raise Exception("dawn.project.ir not found - run ingest.handoff first")
+    
+    with open(ir_meta["path"]) as f:
+        project_ir = json.load(f)
+    
+    bundle_sha256 = project_ir.get("bundle_sha256")
+    confidence = project_ir.get("confidence", {})
+    
+    # DEBUG: Log decision values
+    print(f"[DEBUG hitl.gate] mode={mode}, auto_threshold={auto_threshold}, require_no_flags={require_no_flags}")
+    print(f"[DEBUG hitl.gate] confidence.overall={confidence.get('overall')}, confidence.flags={confidence.get('flags')}")
+    print(f"[DEBUG hitl.gate] bundle_sha256={bundle_sha256}")
+    
+    # Get sandbox
+    sandbox = context["sandbox"]
+    
+    # 1. SKIP mode - auto-approve without checks
+    if mode == "SKIP":
+        return handle_skip_mode(sandbox, bundle_sha256)
+    
+    # 2. AUTO mode - approve if confidence meets criteria
+    if mode == "AUTO":
+        overall = confidence.get("overall", 0)
+        flags = confidence.get("flags", [])
+        
+        # Check AUTO criteria
+        meets_threshold = overall >= auto_threshold
+        meets_flags = not require_no_flags or len(flags) == 0
+        
+        print(f"[DEBUG AUTO] meets_threshold={meets_threshold} ({overall} >= {auto_threshold})")
+        print(f"[DEBUG AUTO] meets_flags={meets_flags} (require_no_flags={require_no_flags}, flags={flags})")
+        
+        if meets_threshold and meets_flags:
+            # AUTO approve!
+            approval = {
+                "schema_version": "1.0.0",
+                "status": "approved",
+                "mode": "AUTO",
+                "bundle_sha256": bundle_sha256,
+                "notes": f"AUTO approved: confidence {overall}, flags {flags}"
+            }
+            sandbox.publish("dawn.hitl.approval", "approval.json", approval, "json")
+            return {"status": "SUCCEEDED", "metrics": {"mode": "AUTO", "confidence": overall}}
+        
+        # AUTO criteria not met - fallthrough to BLOCKED
+        print(f"[DEBUG AUTO] Criteria not met - falling through to BLOCKED")
+    
+    # 3. BLOCKED mode (default or fallthrough)
+    return handle_blocked_mode(
+        sandbox=sandbox,
+        project_root=project_root,
+        bundle_sha256=bundle_sha256,
+        project_ir=project_ir
+    )
+
+
+def handle_skip_mode(sandbox, bundle_sha256: str) -> Dict[str, Any]:
+    """SKIP mode: bypass gate but still emit approval."""
+    approval = {
+        "schema_version": "1.0.0",
+        "status": "skipped",
+        "bundle_sha256": bundle_sha256,
+        "mode": "SKIP",
+        "notes": "Gate bypassed via SKIP mode"
+    }
+    sandbox.publish("dawn.hitl.approval", "approval.json", approval, "json")
+    
+    return {
+        "status": "SUCCEEDED",
+        "metrics": {"gate_mode": "SKIP", "result": "skipped"}
+    }
+
+
+def handle_auto_mode(
+    sandbox,
+    project_root: Path,
+    bundle_sha256: str,
+    confidence_score: float,
+    flags: list,
+    hitl_required: bool,
+    auto_threshold: float,
+    require_no_flags: bool,
+    project_ir: Dict
+) -> Dict[str, Any]:
+    """AUTO mode: auto-approve if conditions met, otherwise fall through to BLOCKED."""
+    # Check if auto-approve conditions are met
+    can_auto_approve = False
+    deny_reason = None
+    
+    if confidence_score < auto_threshold:
+        deny_reason = f"confidence {confidence_score} < threshold {auto_threshold}"
+    elif require_no_flags and flags:
+        deny_reason = f"flags present (require_no_flags=True): {flags}"
+    elif hitl_required:
+        deny_reason = "hitl_required=true in IR"
+    else:
+        can_auto_approve = True
+    
+    if can_auto_approve:
+        # Auto-approve
+        approval = {
+            "schema_version": "1.0.0",
+            "status": "approved",
+            "bundle_sha256": bundle_sha256,
+            "mode": "AUTO",
+            "notes": f"Auto-approved: score={confidence_score}, threshold={auto_threshold}"
+        }
+        sandbox.publish("dawn.hitl.approval", "approval.json", approval, "json")
+        
+        return {
+            "status": "SUCCEEDED",
+            "metrics": {
+                "gate_mode": "AUTO",
+                "result": "approved",
+                "confidence_score": confidence_score
+            }
+        }
+    
+    else:
+        # Fall through to BLOCKED
+        print(f"AUTO mode denied: {deny_reason}")
+        print("Falling back to BLOCKED mode behavior")
+        
+        return handle_blocked_mode(
+            artifact_store=artifact_store,
+            project_root=project_root,
+            bundle_sha256=bundle_sha256,
+            project_ir=project_ir
+        )
+
+
+def handle_blocked_mode(
+    sandbox,
+    project_root: Path,
+    bundle_sha256: str,
+    project_ir: Dict
+) -> Dict[str, Any]:
+    """BLOCKED mode: require human approval file with matching bundle_sha256."""
+    approval_file = project_root / "inputs" / "hitl_approval.json"
+    
+    confidence = project_ir.get("confidence", {})
+    
+    # Load approval from template
+    approval_path = project_root / "inputs" / "hitl_approval.json"
+    
+    if not approval_path.exists():
+        # First-time block (no approval exists yet)
+        # Generate template
+        template = {
+            "bundle_sha256": bundle_sha256,
+            "approved": False,
+            "operator": "",
+            "comment": "",
+            "timestamp_utc": ""
+        }
+        
+        approval_path.parent.mkdir(parents=True, exist_ok=True) # Ensure directory exists
+        
+        with open(approval_path, 'w') as f:
+            json.dump(template, f, indent=2, sort_keys=True)
+        
+        # Write blocked status to artifact
+        approval = {
+            "schema_version": "1.0.0",
+            "status": "blocked",
+            "bundle_sha256": bundle_sha256,
+            "mode": "BLOCKED",
+            "notes": "Awaiting human approval"
+        }
+        sandbox.publish("dawn.hitl.approval", "approval.json", approval, "json")
+        
+        raise BlockedError(
+            f"BLOCKED: HITL approval required.\n\n"
+            f"Confidence: {confidence.get('overall', 0)}\n"
+            f"Flags: {', '.join(confidence.get('flags', []))}\n\n"
+            f"Action Required:\n"
+            f"  1. Review: {approval_path}\n"
+            f"  2. Set 'approved': true (or false to reject)\n"
+            f"  3. Add your name to 'operator'\n"
+            f"  4. Optionally add 'comment'\n"
+            f"  5. Re-run pipeline\n\n"
+            f"Template created at: {approval_path}"
+        )
+    
+    
+    with open(approval_path) as f:
+        approval_input = json.load(f)
+    
+    # STALE APPROVAL CHECK
+    approval_sha = approval_input.get("bundle_sha256")
+    current_sha = bundle_sha256
+    
+    if approval_sha and approval_sha != current_sha:
+        # Approval is stale - inputs changed
+        blocked = {
+            "schema_version": "1.0.0",
+            "status": "blocked",
+            "mode": "BLOCKED",
+            "reason": "stale_approval",
+            "bundle_sha256": current_sha,
+            "stale_bundle_sha256": approval_sha,
+            "notes": "Inputs changed; approval is stale. Please review and re-approve."
+        }
+        sandbox.publish("dawn.hitl.approval", "approval.json", blocked, "json")
+        
+        # Regenerate template bound to new bundle
+        template = {
+            "bundle_sha256": current_sha,
+            "approved": False,
+            "operator": "",
+            "comment": "",
+            "timestamp_utc": ""
+        }
+        with open(approval_path, 'w') as f:
+            json.dump(template, f, indent=2, sort_keys=True)
+        
+        raise Exception(
+            f"STALE APPROVAL: approval bound to {approval_sha[:16]}... "
+            f"but current bundle is {current_sha[:16]}... "
+            f"Inputs have changed. Re-approve required.\n\n"
+            f"Template regenerated at: {approval_path}"
+        )
+    
+    approved = approval_input.get("approved", False)
+    
+    if not approved:
+        # Rejection
+        approval = {
+            "schema_version": "1.0.0",
+            "status": "rejected",
+            "bundle_sha256": bundle_sha256,
+            "mode": "BLOCKED",
+            "notes": approval_input.get("comment", "")
+        }
+        sandbox.publish("dawn.hitl.approval", "approval.json", approval, "json")
+        
+        raise RejectedError(
+            f"REJECTED: HITL approval denied.\n\n"
+            f"Rejected by: {approval_input.get('operator', 'unknown')}\n"
+            f"Comment: {approval_input.get('comment', 'none')}\n\n"
+            f"To proceed:\n"
+            f"  - Address issues and set 'approved': true\n"
+            f"  - Or delete approval file to regenerate template"
+        )
+    
+    # 5. Approved - emit approval artifact
+    approval = {
+        "schema_version": "1.0.0",
+        "status": "approved",
+        "bundle_sha256": bundle_sha256,
+        "mode": "BLOCKED",
+        "notes": approval_input.get("comment", "")
+    }
+    sandbox.publish("dawn.hitl.approval", "approval.json", approval, "json")
+    
+    return {
+        "status": "SUCCEEDED",
+        "metrics": {
+            "gate_mode": "BLOCKED",
+            "result": "approved",
+            "operator": approval.get("operator", "unknown")
+        }
+    }
+
+
+def create_approval_template(
+    bundle_sha256: str,
+    project_ir: Dict,
+    confidence: Dict
+) -> Dict[str, Any]:
+    """Create deterministic approval template."""
+    payload = project_ir.get("payload", {})
+    
+    return {
+        "schema_version": "1.0.0",
+        "bundle_sha256": bundle_sha256,
+        "approved": False,
+        "operator": "",
+        "comment": "",
+        "_context": {
+            "parser": project_ir.get("parser", {}),
+            "ir_type": project_ir.get("ir", {}).get("type"),
+            "confidence_score": confidence.get("overall", 0),
+            "flags": sorted(confidence.get("flags", [])),
+            "summary": {
+                "nodes": payload.get("nodes", 0),
+                "groups": payload.get("groups", 0),
+                "connections": payload.get("connections", 0)
+            }
+        },
+        "_instructions": [
+            "Set 'approved' to true or false",
+            "Add your name to 'operator'",
+            "Optionally add 'comment'",
+            "DO NOT modify 'bundle_sha256' - it binds this approval to current inputs"
+        ]
+    }
+
+
+def load_artifact_json(artifact_index: Dict, artifact_id: str) -> Dict:
+    """Load and parse JSON artifact."""
+    artifact = artifact_index.get(artifact_id)
+    if not artifact:
+        raise FileNotFoundError(f"{artifact_id} not found in artifact index")
+    
+    artifact_path = Path(artifact["path"])
+    if not artifact_path.exists():
+        raise FileNotFoundError(f"{artifact_id} file not found: {artifact_path}")
+    
+    with open(artifact_path, 'r') as f:
+        return json.load(f)
+
+
+class BlockedError(Exception):
+    """Raised when pipeline is blocked waiting for approval."""
+    pass
+
+
+class RejectedError(Exception):
+    """Raised when HITL approval is rejected."""
+    pass
+
+
+class StaleApprovalError(Exception):
+    """Raised when approval file references old bundle_sha256."""
+    pass

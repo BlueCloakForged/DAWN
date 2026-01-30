@@ -1,0 +1,31 @@
+pipelineId: verification_with_healing
+description: "CI check with autonomous self-healing for pytest failures"
+links:
+  - id: ingest.generic_handoff
+
+  - id: validate.project_handoff
+
+  - id: ingest.project_bundle
+
+  # Initial pytest run
+  - id: run.pytest
+
+  # Self-healing link (runs only if pytest failed)
+  - id: validation.self_heal
+    config:
+      when:
+        condition: "on_failure(run.pytest)"
+
+  # Re-run pytest with healed code
+  - id: run.pytest
+    config:
+      when:
+        condition: "on_success(validation.self_heal)"
+
+  # HITL gate (only if healing exhausted/aborted)
+  - id: hitl.healing_gate
+    config:
+      when:
+        condition: "if_artifact_exists(dawn.healing.exhausted_gate)"
+
+  - id: package.project_bundle

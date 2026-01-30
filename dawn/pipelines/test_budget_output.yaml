@@ -1,0 +1,12 @@
+# Test Pipeline: BUDGET_OUTPUT_LIMIT
+# Tests Phase 8.3.3 - output size enforcement
+#
+# Expected behavior:
+# - test.large_output writes a 20MB file
+# - With max_output_bytes: 1048576 (1MB), should fail with BUDGET_OUTPUT_LIMIT
+# - Evidence pack should include the failure record
+
+pipelineId: test_budget_output
+
+links:
+  - id: test.large_output

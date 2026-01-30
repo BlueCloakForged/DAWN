@@ -1,0 +1,12 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.dummy
+spec:
+  requires: []
+  produces:
+    - artifactId: test.dummy.artifact
+      path: dummy.txt
+config:
+  mode: "success"  # success, timeout, schema_failure
+  sleep_sec: 0

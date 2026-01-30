@@ -1,0 +1,11 @@
+pipelineId: test_10_3_budget
+links:
+  - id: ingest.generic_handoff
+  - id: test.dummy
+    config:
+      mode: "success"
+      sleep_sec: 5
+    # Force a timeout
+    overrides:
+      max_wall_time_sec: 2
+  - id: package.project_report

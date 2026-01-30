@@ -1,0 +1,8 @@
+pipelineId: verification
+description: "Strict CI check for uploaded code"
+links:
+  - id: ingest.generic_handoff
+  - id: validate.project_handoff # Creates validate.project_handoff.report
+  - id: ingest.project_bundle # Creates dawn.project.bundle for run.pytest
+  - id: run.pytest
+  - id: package.project_bundle

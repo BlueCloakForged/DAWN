@@ -1,0 +1,158 @@
+[
+  {
+    "id": "handoff_min",
+    "version": "1.0.0",
+    "path": "dawn/pipelines/golden/handoff_min.yaml",
+    "description": "Minimal project ingestion and validation.",
+    "intended_use": "Rapid project setup and initial validation.",
+    "required_inputs": [
+      {
+        "name": "idea.md",
+        "description": "Project concept description",
+        "optional": false
+      }
+    ],
+    "expected_outputs": [
+      "dawn.project.descriptor",
+      "dawn.project.ir",
+      "validate.project_handoff.report",
+      "package.project_bundle.zip"
+    ],
+    "profile": "normal",
+    "estimated_duration_seconds": 30
+  },
+  {
+    "id": "app_mvp",
+    "version": "1.0.0",
+    "path": "dawn/pipelines/golden/app_mvp.yaml",
+    "description": "Initial application scaffolding and blueprinting.",
+    "intended_use": "Building the first structural draft of an application.",
+    "required_inputs": [
+      {
+        "name": "idea.md",
+        "description": "Application requirements and specifications",
+        "optional": false
+      }
+    ],
+    "expected_outputs": [
+      "dawn.project.descriptor",
+      "dawn.spec.srs",
+      "dawn.plan.outline",
+      "dawn.spec.api",
+      "dawn.repo.scaffold",
+      "package.project_bundle.zip"
+    ],
+    "profile": "normal",
+    "estimated_duration_seconds": 120
+  },
+  {
+    "id": "app_iterate",
+    "version": "1.0.0",
+    "path": "dawn/pipelines/golden/app_iterate.yaml",
+    "description": "Full iterative development with change control and safety gating.",
+    "intended_use": "Production-grade development with audit trails.",
+    "required_inputs": [
+      {
+        "name": "idea.md",
+        "description": "Application requirements",
+        "optional": false
+      },
+      {
+        "name": "patch_approval.json",
+        "description": "Manual approval for code changes",
+        "optional": false
+      }
+    ],
+    "expected_outputs": [
+      "dawn.project.descriptor",
+      "dawn.spec.srs",
+      "dawn.patchset",
+      "dawn.gate.patch_decision",
+      "dawn.patch.applied",
+      "dawn.src.diff",
+      "dawn.project.report",
+      "dawn.evidence.pack",
+      "dawn.release.bundle"
+    ],
+    "profile": "normal",
+    "estimated_duration_seconds": 300
+  },
+  {
+    "id": "test_10_3_success",
+    "version": "1.0.0",
+    "path": "dawn/pipelines/test_10_3_success.yaml",
+    "description": "Success test pipeline.",
+    "intended_use": "Internal verification.",
+    "required_inputs": [
+      {
+        "name": "idea.md",
+        "description": "Test input",
+        "optional": false
+      }
+    ],
+    "expected_outputs": [
+      "dawn.project.report"
+    ],
+    "profile": "normal",
+    "estimated_duration_seconds": 10
+  },
+  {
+    "id": "test_10_6",
+    "version": "1.0.0",
+    "path": "dawn/pipelines/test_10_6.yaml",
+    "description": "Verification pipeline for Phase 10.6 (Live Logs)",
+    "intended_use": "Internal verification.",
+    "required_inputs": [
+      {
+        "name": "idea.md",
+        "description": "Test input",
+        "optional": false
+      }
+    ],
+    "expected_outputs": [],
+    "profile": "normal",
+    "estimated_duration_seconds": 15
+  },
+  {
+    "id": "verification",
+    "path": "dawn/pipelines/verification.yaml",
+    "version": "1.0.0",
+    "description": "Strict CI check for uploaded code",
+    "intended_use": "Verifying uploaded Python code with pytest",
+    "required_inputs": [],
+    "expected_outputs": [
+      "dawn.project.bundle",
+      "pytest_report.json",
+      "package.project_bundle.zip"
+    ],
+    "profile": "isolation"
+  },
+  {
+    "id": "autofix",
+    "path": "dawn/pipelines/autofix.yaml",
+    "version": "1.0.0",
+    "description": "Auto-fix pipeline with self-healing for pytest failures",
+    "intended_use": "Robust self-healing for code with test failures",
+    "required_inputs": [],
+    "expected_outputs": [
+      "dawn.project.bundle",
+      "pytest_report.json",
+      "package.project_bundle.zip"
+    ],
+    "profile": "normal"
+  },
+  {
+    "id": "secure_verification",
+    "path": "dawn/pipelines/secure_verification.yaml",
+    "version": "1.0.0",
+    "description": "Strict CI check with mandatory human review for security-sensitive code",
+    "intended_use": "Verifying security-sensitive code with manual approval gate",
+    "required_inputs": [],
+    "expected_outputs": [
+      "dawn.project.bundle",
+      "pytest_report.json",
+      "package.project_bundle.zip"
+    ],
+    "profile": "isolation"
+  }
+]
