@@ -54,6 +54,16 @@ DAWN is built around the concept of **Links**. A Link is an isolated unit of wor
 - **Pipelines**: `dawn/pipelines/` (YAML definitions of workflows)
 - **Runtime**: `dawn/runtime/` (The engine that executes the links)
 
+## Screenshots
+
+| Dashboard | Pipeline View |
+|:---:|:---:|
+| ![Dashboard](docs/images/dawn_ui_dashboard.png) | ![Pipeline](docs/images/dawn_pipeline_view.png) |
+
+| Artifact Graph | Trace Logs |
+|:---:|:---:|
+| ![Artifacts](docs/images/dawn_artifact_graph.png) | ![Traces](docs/images/dawn_trace_logs.png) |
+
 ## Documentation
 
 - [Logical Links](logicallinks.md): Detailed explanation of the link concept.
