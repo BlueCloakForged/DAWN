@@ -756,8 +756,7 @@ with open(path, 'w') as f:
 ### 12.2 Verification Commands
 
 ```bash
-# Run acceptance suite
-cd /Users/vinsoncornejo/DAWN
+# Run acceptance suite (from DAWN root directory)
 rm -rf projects/test_*
 python3 scripts/run_acceptance_tests.py 2>&1 | tee tests/evidence.log
 
@@ -822,7 +821,7 @@ The integration of "Meaning Gates" elevates DAWN from a simple pipeline runner t
 
 ## 15. References
 
-1. DAWN Source Code: `/Users/vinsoncornejo/DAWN`
+1. DAWN Source Code: `./` (repository root)
 2. Acceptance Tests: `scripts/run_acceptance_tests.py`
 3. Evidence Log: `tests/final_evidence_5of5.log`
 4. Link Catalog: `dawn/links/`

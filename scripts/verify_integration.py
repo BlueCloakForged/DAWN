@@ -43,7 +43,7 @@ def test_metadata_persistence():
         import shutil
         shutil.rmtree(project_root)
         
-    metadata = {"trace_id": "sam-trace-123", "user": "vinson"}
+    metadata = {"trace_id": "agent-trace-123", "user": "developer"}
     bootstrap_project(project_id, "autofix", metadata=metadata)
     
     # Check config/project.json

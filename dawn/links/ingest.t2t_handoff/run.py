@@ -59,7 +59,7 @@ def run(context, config):
         "source_bundle": source_bundle,
         "handoff": {
             "engine": "T2T",
-            "engine_path": "/Users/vinsoncornejo/DAWN/T2T",
+            "engine_path": os.path.join(project_root, "..", "..", "T2T"),
             "enable_vision": False,
             "layout_mode": "tiered",
             "hitl_mode": "off"

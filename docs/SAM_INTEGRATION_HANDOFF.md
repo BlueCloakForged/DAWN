@@ -413,9 +413,9 @@ grep "validation.self_heal" projects/{project_id}/runs/*/worker.log
 ## Contact
 
 For questions about DAWN's implementation:
-- Review the [implementation plan](file:///Users/vinsoncornejo/.gemini/antigravity/brain/144cd7b9-4a4e-47ec-9e3f-0f5aee60be2c/implementation_plan.md)
-- Check [contract tests](file:///Users/vinsoncornejo/DAWN/tests/api/test_sam_contract.py) for API examples
-- Run [integration tests](file:///Users/vinsoncornejo/DAWN/tests/integration/test_sam_workflows.py) locally
+- Review the implementation plan in the project documentation
+- Check `tests/api/test_sam_contract.py` for API examples
+- Run `tests/integration/test_sam_workflows.py` locally
 
 For SAM-specific integration questions:
 - Contact the SAM development team

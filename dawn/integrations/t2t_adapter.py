@@ -33,7 +33,9 @@ def run_t2t(
     Writes everything into output_dir.
     Returns metadata (counts, flags, confidence if available).
     """
-    T2T_PATH = "/Users/vinsoncornejo/DAWN/T2T"
+    # Use environment variable or calculate relative to this file's location
+    DAWN_ROOT = os.environ.get("DAWN_ROOT", str(Path(__file__).resolve().parent.parent.parent))
+    T2T_PATH = os.path.join(DAWN_ROOT, "T2T")
     T2T_SRC = os.path.join(T2T_PATH, "src")
     
     # Setup sys.path
