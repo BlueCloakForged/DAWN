@@ -1,0 +1,12 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: package.release_bundle
+spec:
+  requires:
+    - artifactId: dawn.evidence.pack
+    - artifactId: dawn.spec.api
+    - artifactId: dawn.spec.srs
+  produces:
+    - artifactId: dawn.release.bundle
+      path: release_bundle.zip

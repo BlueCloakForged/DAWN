@@ -1,0 +1,42 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: ingest.t2t_handoff
+spec:
+  description: "Handoff to T2T for document ingestion and IR generation"
+  requires: []
+  produces:
+    - artifactId: dawn.project.descriptor
+      path: project_descriptor.json
+      schema:
+        type: json
+    - artifactId: dawn.project.ir
+      path: project_ir.json
+      schema:
+        type: json
+    - artifactId: dawn.project.export.primary
+      path: export_primary.json
+      schema:
+        type: json
+      optional: true
+      classify:
+        kind: export
+        target: T2T
+    - artifactId: dawn.project.export.workflow
+      path: export_workflow.json
+      schema:
+        type: json
+      optional: true
+      classify:
+        kind: workflow_export
+        target: T2T
+  runtime:
+    timeoutSeconds: 600
+    retries: 0
+  steps:
+    - id: validate_inputs
+      type: validator
+    - id: run
+      type: executor
+    - id: validate_outputs
+      type: validator

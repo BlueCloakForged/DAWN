@@ -1,0 +1,15 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: hitl.healing_gate
+  description: "HITL gate for exhausted healing cycles"
+spec:
+  requires:
+    - artifactId: dawn.healing.exhausted_gate
+      check: exists
+  produces:
+    - artifactId: dawn.hitl.healing_resolution
+      path: healing_resolution.json
+  runtime:
+    timeoutSeconds: 0 # Manual gate, no timeout
+    retries: 0

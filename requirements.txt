@@ -1,8 +1,9 @@
-# DAWN (Core) - Requirements
+# DAWN (ForgeChain) - Requirements
 # Deterministic Auditable Workflow Network
-# Version: 1.0.0
+# Version: 0.10.3
 #
 # Install: pip install -r requirements.txt
+# Recommended: Use a virtual environment (python3 -m venv .venv)
 
 # === Core Framework Dependencies ===
 
@@ -23,4 +24,80 @@ python-multipart>=0.0.6  # Required for file uploads in FastAPI
 jsonschema>=4.20.0
 
 # === Optional Performance/Monitoring Dependencies ===
+
+# System resource monitoring (CPU, memory tracking)
+# Optional - enables resource metrics in run summaries
 psutil>=5.9.0
+
+# === Runtime Module Dependencies ===
+
+# Standard library modules (no install needed):
+# - argparse: Command-line argument parsing
+# - hashlib: Artifact digests and integrity checks
+# - uuid: Run ID generation
+# - json: Artifact and index serialization
+# - pathlib: Cross-platform path handling
+# - datetime: Timestamp generation
+# - socket: Worker identification
+# - threading: Timeout enforcement
+# - os, sys, shutil: File and system operations
+# - importlib: Dynamic link module loading
+# - time: Performance timing
+
+# === T2T Agent Integration Dependencies ===
+# These are required if using the T2T (Text-to-Topology) integration
+
+# Web UI framework
+streamlit>=1.28.0
+
+# Data processing and analysis
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Document processing (PDF parsing)
+pdfplumber>=0.10.0
+pymupdf>=1.23.0  # PyMuPDF (fitz) for PDF image extraction
+
+# Computer vision and OCR
+opencv-python>=4.8.0  # Line detection in diagrams
+pytesseract>=0.3.10   # OCR wrapper (requires tesseract-ocr system package)
+
+# Network visualization
+st-link-analysis>=0.4.0
+
+# === Development Dependencies (Optional) ===
+# Uncomment to install development tools
+
+# Testing framework
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+
+# Code formatters
+# black>=23.0.0
+# isort>=5.12.0
+
+# Type checking
+# mypy>=1.0.0
+
+# Linting
+# ruff>=0.1.0
+# pylint>=2.17.0
+
+# === System Dependencies (install separately) ===
+# These must be installed via your system package manager:
+#
+# macOS (Homebrew):
+#   brew install tesseract poppler
+#
+# Linux (apt):
+#   apt install tesseract-ocr poppler-utils
+#
+# Windows:
+#   Download and install Tesseract from: https://github.com/UB-Mannheim/tesseract/wiki
+#   Download and install Poppler from: https://blog.alivate.com.au/poppler-windows/
+
+# === Notes ===
+# - Python 3.8+ required
+# - For production use, pin specific versions instead of using >=
+# - Run `pip list --outdated` to check for updates
+# - Use `pip freeze > requirements.lock` to create a lockfile

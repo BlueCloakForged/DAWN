@@ -9,13 +9,13 @@
 
 ## Abstract
 
-DAWN (Deterministic Auditable Workflow Network) is a pipeline orchestration framework designed for deterministic execution, comprehensive auditability, and contract-based artifact management. This paper presents the architecture, implementation, and verification of DAWN's core components, with particular emphasis on the artifact registry system that enables stale-safe approvals, deterministic bundle management, and domain-agnostic intermediate representations.
+DAWN (Deterministic Auditable Workflow Network) is a pipeline orchestration framework designed for deterministic execution, comprehensive auditability, and contract-based artifact management. This paper presents the architecture, implementation, and verification of DAWN's core components, with particular emphasis on "Meaning Gates"—a mechanism that cryptographically binds human intent to automated execution.
 
-We demonstrate through comprehensive acceptance testing (5/5 tests passing) that DAWN achieves:
+We demonstrate through comprehensive acceptance testing that DAWN achieves:
 - **Deterministic execution**: Identical inputs produce identical outputs
-- **Stale-safe gating**: Human-in-the-loop (HITL) approvals bound to specific input states
-- **Domain agnosticism**: Pluggable parsers with generic artifact contracts
-- **Audit completeness**: Immutable ledger with artifact traceability
+- **Meaning Trust**: Cryptographic binding between human intent (Contract) and execution (Bundle).
+- **Stale-safe gating**: Dual-binding approvals locked to both physical state and intent state.
+- **Audit completeness**: Final release audits confirming compliance with the Project Contract.
 
 ---
 
@@ -25,19 +25,19 @@ We demonstrate through comprehensive acceptance testing (5/5 tests passing) that
 
 Modern CI/CD and workflow systems face several challenges:
 
-1. **Non-determinism**: Timestamps, file ordering, and environmental variance produce different outputs from identical inputs
-2. **Stale approvals**: Manual approvals can become invalid when inputs change, leading to dangerous deployments
-3. **Domain coupling**: Workflow systems tightly coupled to specific domains (e.g., Kubernetes, Terraform) limiting reusability
-4. **Audit gaps**: Insufficient traceability between inputs, approvals, and outputs for compliance requirements
+1. **Non-determinism**: Environmental variance produce different outputs from identical inputs
+2. **Interpretation Drift**: Subtle human intent is lost or misinterpreted during handoff to agents
+3. **Stale approvals**: Manual approvals can become invalid when either code OR intent changes
+4. **Audit gaps**: Insufficient proof that final outputs match the original "Definition of Done" (DoD)
 
 ### 1.2 DAWN's Approach
 
 DAWN addresses these challenges through:
 
-- **Links**: Autonomous units of work with explicit `requires`/`produces` contracts
-- **Artifact Registry**: First-class tracking of all pipeline outputs with cryptographic digests
-- **Bundle SHA Binding**: Human approvals cryptographically bound to specific input states
-- **Domain-Agnostic IR**: Generic intermediate representation with pluggable domain-specific parsers
+- **Meaning Gates**: Dual-gate architecture (Beginning/Ending) enforcing intent binding
+- **Artifact Registry**: Cryptographic tracking of all pipeline outputs
+- **Dual-Binding Approvals**: HITL approvals locked to both `bundle_sha256` and `contract_sha256`
+- **Project Contract**: A schema-enforced "Rule of Law" defining goals, DoD, and decision rights
 - **Immutable Ledger**: Complete audit trail of all execution events and artifact mutations
 
 ---
@@ -66,12 +66,12 @@ DAWN addresses these challenges through:
                             │
                             ▼
               ┌─────────────────────────────┐
-              │   Link Catalog (Pluggable)  │
+              │   Meaning Gates (Flow)      │
               ├─────────────────────────────┤
               │ • ingest.project_bundle     │
-              │ • ingest.handoff            │
-              │ • hitl.gate                 │
-              │ • validate.json_artifacts   │
+              │ • spec.requirements (NEW)   │
+              │ • hitl.gate (DUAL-BIND)     │
+              │ • quality.release_verifier  │
               │ • [custom links...]         │
               └─────────────────────────────┘
 ```
@@ -315,19 +315,22 @@ In traditional CI/CD systems, a human approval remains valid even after inputs c
 3. System deploys v2 using approval from v1  ❌ DANGEROUS
 ```
 
-### 5.2 Bundle SHA Binding
+### 5.2 Dual-Binding (Meaning + Physical)
 
-DAWN binds every approval to a specific `bundle_sha256`:
+DAWN binds every approval to both the physical state (`bundle_sha256`) and the intent state (`contract_sha256`):
 
 ```json
 {
   "schema_version": "1.0.0",
   "approved": true,
-  "operator": "alice@example.com",
   "bundle_sha256": "d38daaff3d...",
-  "timestamp_utc": "2026-01-19T10:00:00Z"
+  "contract_sha256": "bc4bea49...",
+  "timestamp_utc": "2026-02-01T10:00:00Z"
 }
 ```
+
+This prevents **Intent Drift**—where the code remains the same but the human's requirements have changed since the last approval.
+
 
 ### 5.3 Stale Detection Algorithm
 
@@ -399,9 +402,49 @@ Error: STALE APPROVAL: approval bound to bc38b7e1...
 
 ---
 
-## 6. Domain-Agnostic IR and AUTO Mode
+## 6. Meaning Trust & Project Contracts
 
-### 6.1 Generic IR Envelope
+### 6.1 The Beginning Gate (`spec.requirements`)
+
+The transition from raw prose to machine-readable IR is a critical transition point where meaning can be lost. To mitigate this, DAWN introduces a formal **Beginning Gate** through the `spec.requirements` link.
+
+**Project Contract Artifact**:
+The output is a `dawn.project.contract` containing:
+- **Goals**: Explicit outcomes required (e.g., "Implement JWT Auth")
+- **Non-Goals**: Explicit boundaries (e.g., "Do not change the database schema")
+- **Decision Rights**: Allowed/Forbidden file paths for the agent
+- **Definition of Done**: Automated tests or invariants that must pass
+
+### 6.2 Deterministic Meaning Binding
+
+The `contract_sha256` is computed by canonicalizing the contract fields (sorting keys, normalizing lists). This ensures that the "Rule of Law" is as immutable as the code itself.
+
+---
+
+## 7. Audit & Verification (Ending Gate)
+
+### 7.1 Release Verifier (`quality.release_verifier`)
+
+The system closes the loop with an **Ending Gate** that audits the final execution state against the original contract.
+
+**Audit Criteria**:
+1. **Binding Coherence**: Do the bundle and contract SHAs match what the human approved?
+2. **Ledger Integrity**: Does the immutable ledger show any sandbox failures or policy violations?
+3. **Scope Compliance**: Did the agent write to any files outside of its `allowed_paths`?
+4. **DoD Satisfaction**: Did all required tests and golden scenarios pass?
+
+### 7.2 Trust Receipts & Diffs
+
+To facilitate human review without requiring deep technical dives, DAWN produces:
+- **Trust Receipt**: A high-level markdown summary of the audit status.
+- **Project Diff**: A cryptographic delta showing exactly what was added, modified, or deleted by the agent, compared against the original bundle.
+
+---
+
+
+## 8. Domain-Agnostic IR and AUTO Mode
+
+### 8.1 Generic IR Envelope
 
 DAWN maintains domain agnosticism through a generic intermediate representation:
 
@@ -438,7 +481,7 @@ DAWN maintains domain agnosticism through a generic intermediate representation:
 - `dawn.export.n8n` - n8n workflow format
 - `dawn.export.<custom>` - Any format
 
-### 6.2 AUTO Mode Gating
+### 8.2 AUTO Mode Gating
 
 AUTO mode enables automatic approval based on confidence criteria:
 
@@ -473,7 +516,7 @@ config:
   require_no_flags: true
 ```
 
-### 6.3 Verification Evidence
+### 8.3 Verification Evidence
 
 **Test D.1: AUTO Approve**
 ```json
@@ -502,9 +545,9 @@ config:
 
 ---
 
-## 7. Pipeline Composition
+## 9. Pipeline Composition
 
-### 7.1 Link Chaining
+### 9.1 Link Chaining
 
 Pipelines are YAML definitions that chain links:
 
@@ -533,7 +576,7 @@ links:
   - link: validate.json_artifacts
 ```
 
-### 7.2 Data Flow Example
+### 9.2 Data Flow Example
 
 **Two-Link Pipeline**:
 
@@ -580,9 +623,9 @@ Link 2 → artifact_store.get() ← Registry resolves path
 
 ---
 
-## 8. Acceptance Testing
+## 10. Acceptance Testing
 
-### 8.1 Test Suite Design
+### 10.1 Test Suite Design
 
 Five comprehensive tests verify all invariants:
 
@@ -594,7 +637,7 @@ Five comprehensive tests verify all invariants:
 | **Test D** | AUTO Mode | Threshold logic, flag handling |
 | **Test E** | Determinism | Control-plane exclusion, identical SHAs |
 
-### 8.2 Test Results
+### 10.2 Test Results
 
 ```
 Test A: ✅ PASSED - Baseline BLOCKED
@@ -606,7 +649,7 @@ Test E: ✅ PASSED - Determinism
 🎉 ALL TESTS PASSED! (5/5)
 ```
 
-### 8.3 Artifact-Based Validation
+### 10.3 Artifact-Based Validation
 
 Tests validate **behavioral contracts** via artifacts, not string matching:
 
@@ -634,9 +677,9 @@ This approach is **robust** (survives error message changes) and **precise** (va
 
 ---
 
-## 9. Implementation Insights
+## 11. Implementation Insights
 
-### 9.1 Config Extraction Pattern
+### 11.1 Config Extraction Pattern
 
 Links may receive full `link.yaml` structure or just the config dict:
 
@@ -648,7 +691,7 @@ else:
     config = link_config  # Direct config
 ```
 
-### 9.2 AlwaysRun Flag
+### 11.2 AlwaysRun Flag
 
 Ground truth links (like bundle) use `alwaysRun: true`:
 
@@ -663,7 +706,7 @@ if not always_run:
 
 This ensures bundle recomputes even when orchestrator thinks inputs haven't changed (edge case handling).
 
-### 9.3 Canonical JSON Serialization
+### 11.3 Canonical JSON Serialization
 
 All artifacts use deterministic JSON:
 
@@ -682,9 +725,9 @@ with open(path, 'w') as f:
 
 ---
 
-## 10. Production Deployment
+## 12. Production Deployment
 
-### 10.1 Invariants Checklist
+### 12.1 Invariants Checklist
 
 **Domain-Agnostic Architecture** ✅
 - Primary artifact: `dawn.project.ir`
@@ -710,7 +753,7 @@ with open(path, 'w') as f:
 - Links use `sandbox.publish()`
 - Resolution via `artifact_store.get()`
 
-### 10.2 Verification Commands
+### 12.2 Verification Commands
 
 ```bash
 # Run acceptance suite
@@ -724,7 +767,7 @@ cat projects/test_c_stale/artifacts/hitl.gate/approval.json
 cat projects/test_d_auto_approve/artifacts/hitl.gate/approval.json
 ```
 
-### 10.3 Deployment Readiness
+### 12.3 Deployment Readiness
 
 **Status**: ✅ **PRODUCTION READY**
 
@@ -736,9 +779,9 @@ cat projects/test_d_auto_approve/artifacts/hitl.gate/approval.json
 
 ---
 
-## 11. Future Directions
+## 13. Future Directions
 
-### 11.1 Pluggable Parsers
+### 13.1 Pluggable Parsers
 
 The stub parser can be replaced with domain-specific parsers:
 
@@ -748,7 +791,7 @@ The stub parser can be replaced with domain-specific parsers:
 
 All parsers produce the same generic IR envelope, maintaining domain agnosticism.
 
-### 11.2 Distributed Execution
+### 13.2 Distributed Execution
 
 Current implementation is local single-node. Future work:
 
@@ -756,7 +799,7 @@ Current implementation is local single-node. Future work:
 - **Container isolation**: Each link in separate container
 - **Remote artifact store**: S3-backed artifact registry
 
-### 11.3 Enhanced Auditability
+### 13.3 Enhanced Auditability
 
 - **Ledger queries**: SQL-like queries over event stream
 - **Compliance reports**: Automated evidence pack generation
@@ -764,21 +807,20 @@ Current implementation is local single-node. Future work:
 
 ---
 
-## 12. Conclusion
+## 14. Conclusion
 
 DAWN demonstrates that deterministic, auditable, domain-agnostic workflow orchestration is achievable through:
 
-1. **Contract-driven architecture**: Explicit requires/produces declarations
-2. **Artifact registry**: Unambiguous artifact identification and tracking
-3. **Cryptographic binding**: Human approvals bound to input state via SHA256
-4. **Control-plane separation**: Data-plane determinism through exclusion patterns
-5. **Artifact-based validation**: Testing behavioral contracts, not implementation details
+1. **Meaning Gates architecture**: Explicit contract-driven intake and release audits.
+2. **Dual-Binding approvals**: Cryptographic locking of intent and physical state.
+3. **Artifact registry**: Unambiguous tracking of project evolution.
+4. **Control-plane separation**: Data-plane determinism via stable hashing.
 
-The system is production-ready with comprehensive verification (5/5 tests passing) and provides a foundation for secure, auditable automation workflows across diverse domains.
+The integration of "Meaning Gates" elevates DAWN from a simple pipeline runner to a **Trust Fabric** for agentic execution, ensuring that what is built always matches what was imagined.
 
 ---
 
-## References
+## 15. References
 
 1. DAWN Source Code: `/Users/vinsoncornejo/DAWN`
 2. Acceptance Tests: `scripts/run_acceptance_tests.py`
@@ -788,7 +830,7 @@ The system is production-ready with comprehensive verification (5/5 tests passin
 
 ---
 
-## Appendix A: Key Artifacts
+## 16. Appendix A: Key Artifacts
 
 ### Bundle Manifest
 ```json

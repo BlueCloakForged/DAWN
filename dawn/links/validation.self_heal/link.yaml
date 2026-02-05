@@ -1,0 +1,26 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: validation.self_heal
+spec:
+  description: Autonomous self-healing orchestrator for pytest failures
+  requires:
+    - artifactId: dawn.project.bundle
+    - artifactId: dawn.test.execution_report
+  produces:
+    - artifactId: dawn.healing.metrics
+      path: healing_metrics.json
+    - artifactId: dawn.healing.report
+      path: healing_report.json
+      description: "Generic healing iteration report for API/UI consumers"
+    - artifactId: dawn.healing.exhausted_gate
+      path: healing_exhausted_gate.json
+      optional: true
+  config:
+    max_cycles: 5
+    early_abort_threshold: -0.1
+    healer_endpoint: ${CODE_HEALER_URL}
+    cycle_timeouts: [30, 45, 60, 90, 120]
+  runtime:
+    timeoutSeconds: 900
+    retries: 0

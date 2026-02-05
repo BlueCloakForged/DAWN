@@ -21,7 +21,9 @@ class Ledger:
                   outputs: Optional[Dict[str, Any]] = None, 
                   metrics: Optional[Dict[str, Any]] = None, 
                   errors: Optional[Dict[str, Any]] = None,
-                  policy_versions: Optional[Dict[str, Any]] = None):
+                  policy_versions: Optional[Dict[str, Any]] = None,
+                  drift_score: Optional[float] = None,
+                  drift_metadata: Optional[Dict[str, Any]] = None):
         
         event = {
             "timestamp": time.time(),
@@ -35,7 +37,9 @@ class Ledger:
             "outputs": outputs if outputs is not None else {},
             "metrics": metrics if metrics is not None else {},
             "errors": errors if errors is not None else {},
-            "policy_versions": policy_versions if policy_versions is not None else {}
+            "policy_versions": policy_versions if policy_versions is not None else {},
+            "drift_score": drift_score,
+            "drift_metadata": drift_metadata if drift_metadata is not None else {}
         }
         
         with open(self.events_file, "a") as f:

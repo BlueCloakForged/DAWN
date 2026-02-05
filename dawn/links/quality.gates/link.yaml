@@ -1,0 +1,26 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: quality.gates
+spec:
+  description: "Schema-only gate link"
+  requires:
+    - artifactId: "service.catalog.catalog"
+      from_link: "service.catalog"
+  produces:
+    - artifactId: "quality.gates.report"
+      path: "report.json"
+      schema:
+        type: "json"
+  runtime:
+    timeoutSeconds: 600
+    retries: 0
+  steps:
+    - id: validate_inputs
+      type: validator
+    - id: run
+      type: executor
+    - id: validate_outputs
+      type: validator
+    - id: emit_ledger
+      type: ledger

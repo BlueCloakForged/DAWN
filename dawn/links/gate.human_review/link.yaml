@@ -1,0 +1,18 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: gate.human_review
+spec:
+  description: "Deterministic gate that requires a human_decision.json file to proceed."
+  requires: []
+  produces:
+    - artifactId: dawn.gate.decision
+      path: human_decision.json
+      schema:
+        type: json
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: run
+      type: executor

@@ -1,0 +1,19 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: spec.requirements
+  description: "Converts user intent into a schema-enforced, hashed Project Contract."
+spec:
+  requires:
+    - artifact: dawn.project.bundle
+  produces:
+    - artifact: dawn.project.contract
+      path: contract.json
+      schema: json
+
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: run
+      type: executor

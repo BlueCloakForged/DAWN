@@ -1,0 +1,14 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: package.evidence_pack
+spec:
+  requires:
+    - artifactId: dawn.project.descriptor
+    - artifactId: dawn.project.ir
+    - artifactId: package.project_bundle.zip
+    - artifactId: dawn.src.diff
+    - artifactId: dawn.project.report
+  produces:
+    - artifactId: dawn.evidence.pack
+      path: evidence_pack.zip

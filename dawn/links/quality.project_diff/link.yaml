@@ -1,0 +1,21 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: quality.project_diff
+  description: "Computes a cryptographic diff between the original bundle and current state."
+spec:
+  requires:
+    - artifact: dawn.project.bundle
+    - artifact: dawn.project.contract
+      optional: true
+  produces:
+    - artifact: dawn.project.diff
+      path: project_diff.json
+      schema: json
+
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: run
+      type: executor

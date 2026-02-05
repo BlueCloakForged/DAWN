@@ -65,7 +65,30 @@ PROJECT_IR_SCHEMA = {
     }
 }
 
+COHERENCE_POLICY_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "threshold": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "check_frequency": {"type": "string", "enum": ["always", "periodic"]},
+        "on_drift": {"type": "string", "enum": ["fail", "warn", "pause_and_reflect"]}
+    }
+}
+
 # Registry for easy lookup by name in link contracts
 SCHEMA_REGISTRY = {
     "dawn.project.ir": PROJECT_IR_SCHEMA
+}
+
+META_BUNDLE_SCHEMA = {
+    "type": "object",
+    "required": ["timestamp", "origin_source", "environment_hash"],
+    "properties": {
+        "timestamp": {"type": "string"},
+        "origin_source": {"type": "string"},
+        "environment_hash": {"type": "string"},
+        "media_digests": {
+            "type": "object",
+            "additionalProperties": {"type": "string"}
+        }
+    }
 }

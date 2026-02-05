@@ -1,0 +1,19 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: judge.model
+  description: "Autonomous evaluation link for workflow outputs"
+spec:
+  requires:
+    - artifact: dawn.project.bundle
+    - artifact: dawn.test.execution_report
+      optional: true
+  produces:
+    - artifact: dawn.judge.score
+      schema: json
+  runtime:
+    timeoutSeconds: 120
+    retries: 2
+  config:
+    model: "gpt-4o"
+    prompt_template: "Evaluate the following code and test results. Provide a score from 0-1 and a reasoning."

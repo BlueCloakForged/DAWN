@@ -1,0 +1,10 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: impl.scaffold_repo
+spec:
+  requires:
+    - artifactId: dawn.plan.outline
+  produces:
+    - artifactId: dawn.repo.scaffold
+      path: scaffold_manifest.json

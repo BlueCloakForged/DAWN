@@ -1,0 +1,10 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: spec.api_contracts
+spec:
+  requires:
+    - artifactId: dawn.plan.outline
+  produces:
+    - artifactId: dawn.spec.api
+      path: api_contracts.json

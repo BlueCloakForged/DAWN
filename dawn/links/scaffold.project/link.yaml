@@ -1,0 +1,18 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: scaffold.project
+spec:
+  description: "Creates a deterministic project folder scaffold."
+  requires: []
+  produces:
+    - artifactId: dawn.scaffold.manifest
+      path: scaffold_manifest.json
+      schema:
+        type: json
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: run
+      type: executor

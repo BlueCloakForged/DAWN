@@ -1,0 +1,10 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.bad_schema
+spec:
+  requires: []
+  produces:
+    - artifactId: dawn.project.ir
+      path: project_ir.json
+      schema: { type: json, ref: "dawn.project.ir" }

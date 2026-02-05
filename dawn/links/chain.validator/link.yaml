@@ -1,0 +1,22 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: chain.validator
+spec:
+  description: Reads ledger, asserts invariants
+  requires:
+    []
+  produces:
+    []
+  runtime:
+    timeoutSeconds: 600
+    retries: 0
+  steps:
+    - id: validate_inputs
+      type: validator
+    - id: run
+      type: executor
+    - id: validate_outputs
+      type: validator
+    - id: emit_ledger
+      type: ledger

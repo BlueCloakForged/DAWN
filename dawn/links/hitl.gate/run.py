@@ -48,27 +48,37 @@ def run(context, link_config):
     project_root = Path(context["project_root"])
     artifact_store = context["artifact_store"]
     
+    # Try loading Project Contract first (Meaning Gates v1)
+    # Then fall back to Project IR (Legacy/Generic)
+    contract_meta = artifact_store.get("dawn.project.contract")
     ir_meta = artifact_store.get("dawn.project.ir")
-    if not ir_meta:
-        raise Exception("dawn.project.ir not found - run ingest.handoff first")
     
-    with open(ir_meta["path"]) as f:
-        project_ir = json.load(f)
-    
-    bundle_sha256 = project_ir.get("bundle_sha256")
-    confidence = project_ir.get("confidence", {})
+    if contract_meta:
+        with open(contract_meta["path"]) as f:
+            project_data = json.load(f)
+            contract_sha256 = project_data.get("contract_sha256")
+            bundle_sha256 = project_data.get("bundle_sha256")
+            confidence = project_data.get("confidence", {})
+    elif ir_meta:
+        with open(ir_meta["path"]) as f:
+            project_data = json.load(f)
+            contract_sha256 = None
+            bundle_sha256 = project_data.get("bundle_sha256")
+            confidence = project_data.get("confidence", {})
+    else:
+        raise Exception("INPUT_MISSING: Neither dawn.project.contract nor dawn.project.ir found. Run spec.requirements or ingest.handoff first.")
     
     # DEBUG: Log decision values
     print(f"[DEBUG hitl.gate] mode={mode}, auto_threshold={auto_threshold}, require_no_flags={require_no_flags}")
     print(f"[DEBUG hitl.gate] confidence.overall={confidence.get('overall')}, confidence.flags={confidence.get('flags')}")
-    print(f"[DEBUG hitl.gate] bundle_sha256={bundle_sha256}")
+    print(f"[DEBUG hitl.gate] bundle_sha256={bundle_sha256}, contract_sha256={contract_sha256}")
     
     # Get sandbox
     sandbox = context["sandbox"]
     
     # 1. SKIP mode - auto-approve without checks
     if mode == "SKIP":
-        return handle_skip_mode(sandbox, bundle_sha256)
+        return handle_skip_mode(sandbox, bundle_sha256, contract_sha256)
     
     # 2. AUTO mode - approve if confidence meets criteria
     if mode == "AUTO":
@@ -89,6 +99,7 @@ def run(context, link_config):
                 "status": "approved",
                 "mode": "AUTO",
                 "bundle_sha256": bundle_sha256,
+                "contract_sha256": contract_sha256,
                 "notes": f"AUTO approved: confidence {overall}, flags {flags}"
             }
             sandbox.publish("dawn.hitl.approval", "approval.json", approval, "json")
@@ -102,16 +113,19 @@ def run(context, link_config):
         sandbox=sandbox,
         project_root=project_root,
         bundle_sha256=bundle_sha256,
-        project_ir=project_ir
+        contract_sha256=contract_sha256,
+        confidence=confidence,
+        project_data=project_data
     )
 
 
-def handle_skip_mode(sandbox, bundle_sha256: str) -> Dict[str, Any]:
+def handle_skip_mode(sandbox, bundle_sha256: str, contract_sha256: str = None) -> Dict[str, Any]:
     """SKIP mode: bypass gate but still emit approval."""
     approval = {
         "schema_version": "1.0.0",
         "status": "skipped",
         "bundle_sha256": bundle_sha256,
+        "contract_sha256": contract_sha256,
         "mode": "SKIP",
         "notes": "Gate bypassed via SKIP mode"
     }
@@ -185,12 +199,12 @@ def handle_blocked_mode(
     sandbox,
     project_root: Path,
     bundle_sha256: str,
-    project_ir: Dict
+    contract_sha256: str,
+    confidence: Dict,
+    project_data: Dict
 ) -> Dict[str, Any]:
-    """BLOCKED mode: require human approval file with matching bundle_sha256."""
+    """BLOCKED mode: require human approval file with matching bundle_sha256 and contract_sha256."""
     approval_file = project_root / "inputs" / "hitl_approval.json"
-    
-    confidence = project_ir.get("confidence", {})
     
     # Load approval from template
     approval_path = project_root / "inputs" / "hitl_approval.json"
@@ -200,6 +214,7 @@ def handle_blocked_mode(
         # Generate template
         template = {
             "bundle_sha256": bundle_sha256,
+            "contract_sha256": contract_sha256,
             "approved": False,
             "operator": "",
             "comment": "",
@@ -216,6 +231,7 @@ def handle_blocked_mode(
             "schema_version": "1.0.0",
             "status": "blocked",
             "bundle_sha256": bundle_sha256,
+            "contract_sha256": contract_sha256,
             "mode": "BLOCKED",
             "notes": "Awaiting human approval"
         }
@@ -239,25 +255,30 @@ def handle_blocked_mode(
         approval_input = json.load(f)
     
     # STALE APPROVAL CHECK
-    approval_sha = approval_input.get("bundle_sha256")
-    current_sha = bundle_sha256
+    approval_bundle_sha = approval_input.get("bundle_sha256")
+    approval_contract_sha = approval_input.get("contract_sha256")
     
-    if approval_sha and approval_sha != current_sha:
-        # Approval is stale - inputs changed
+    bundle_stale = approval_bundle_sha and approval_bundle_sha != bundle_sha256
+    contract_stale = approval_contract_sha and approval_contract_sha != contract_sha256
+    
+    if bundle_stale or contract_stale:
+        # Approval is stale
+        reason = "stale_bundle" if bundle_stale else "stale_contract"
         blocked = {
             "schema_version": "1.0.0",
             "status": "blocked",
             "mode": "BLOCKED",
-            "reason": "stale_approval",
-            "bundle_sha256": current_sha,
-            "stale_bundle_sha256": approval_sha,
-            "notes": "Inputs changed; approval is stale. Please review and re-approve."
+            "reason": reason,
+            "bundle_sha256": bundle_sha256,
+            "contract_sha256": contract_sha256,
+            "notes": f"Inputs or Contract changed ({reason}); approval is stale. Please re-approve."
         }
         sandbox.publish("dawn.hitl.approval", "approval.json", blocked, "json")
         
-        # Regenerate template bound to new bundle
+        # Regenerate template bound to new state
         template = {
-            "bundle_sha256": current_sha,
+            "bundle_sha256": bundle_sha256,
+            "contract_sha256": contract_sha256,
             "approved": False,
             "operator": "",
             "comment": "",
@@ -267,9 +288,8 @@ def handle_blocked_mode(
             json.dump(template, f, indent=2, sort_keys=True)
         
         raise Exception(
-            f"STALE APPROVAL: approval bound to {approval_sha[:16]}... "
-            f"but current bundle is {current_sha[:16]}... "
-            f"Inputs have changed. Re-approve required.\n\n"
+            f"APPROVAL_STALE: {reason.upper()} mismatch. "
+            f"Physical state or Meaning state has changed. Re-approve required.\n\n"
             f"Template regenerated at: {approval_path}"
         )
     
@@ -300,6 +320,7 @@ def handle_blocked_mode(
         "schema_version": "1.0.0",
         "status": "approved",
         "bundle_sha256": bundle_sha256,
+        "contract_sha256": contract_sha256,
         "mode": "BLOCKED",
         "notes": approval_input.get("comment", "")
     }
@@ -317,11 +338,11 @@ def handle_blocked_mode(
 
 def create_approval_template(
     bundle_sha256: str,
-    project_ir: Dict,
+    project_data: Dict,
     confidence: Dict
 ) -> Dict[str, Any]:
     """Create deterministic approval template."""
-    payload = project_ir.get("payload", {})
+    payload = project_data.get("payload", {}) or project_data.get("ir", {}).get("payload", {})
     
     return {
         "schema_version": "1.0.0",
@@ -330,8 +351,8 @@ def create_approval_template(
         "operator": "",
         "comment": "",
         "_context": {
-            "parser": project_ir.get("parser", {}),
-            "ir_type": project_ir.get("ir", {}).get("type"),
+            "parser": project_data.get("parser", {}),
+            "ir_type": project_data.get("ir", {}).get("type") or project_data.get("type"),
             "confidence_score": confidence.get("overall", 0),
             "flags": sorted(confidence.get("flags", [])),
             "summary": {
@@ -344,7 +365,7 @@ def create_approval_template(
             "Set 'approved' to true or false",
             "Add your name to 'operator'",
             "Optionally add 'comment'",
-            "DO NOT modify 'bundle_sha256' - it binds this approval to current inputs"
+            "DO NOT modify 'bundle_sha256' or 'contract_sha256' - it binds this approval to current inputs and intent"
         ]
     }
 

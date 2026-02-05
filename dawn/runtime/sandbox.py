@@ -2,13 +2,16 @@ import os
 import json
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 class Sandbox:
-    def __init__(self, project_root: str, link_id: str):
+    def __init__(self, project_root: str, link_id: str, is_shadow: bool = False):
         self.project_root = Path(project_root)
         self.link_id = link_id
-        self.sandbox_root = self.project_root / "artifacts" / link_id
+        self.is_shadow = is_shadow
+        
+        base = self.project_root / "shadow_artifacts" if is_shadow else self.project_root / "artifacts"
+        self.sandbox_root = base / link_id
         self.sandbox_root.mkdir(parents=True, exist_ok=True)
         
         # Injected by orchestrator
@@ -38,7 +41,7 @@ class Sandbox:
         shutil.copy2(src_path, dest_path)
         return str(dest_path)
 
-    def publish(self, artifact: str, filename: str, obj: Any, schema: str = "json"):
+    def publish(self, artifact: str, filename: str, obj: Any, schema: str = "json", blob_uri: Optional[str] = None):
         """
         Publish an artifact and register it in the artifact store.
         
@@ -47,6 +50,7 @@ class Sandbox:
             filename: Filename to write (e.g., "bundle.json")
             obj: JSON-serializable object
             schema: Schema type hint
+            blob_uri: Optional external storage URI
         """
         path = self.write_json(filename, obj)
         if self.artifact_store:
@@ -54,11 +58,13 @@ class Sandbox:
                 artifact_id=artifact,
                 abs_path=str(Path(path).absolute()),
                 schema=schema,
-                producer_link_id=self.link_id
+                producer_link_id=self.link_id,
+                blob_uri=blob_uri,
+                is_shadow=self.is_shadow
             )
         return path
 
-    def publish_text(self, artifact: str, filename: str, text: str, schema: str = "text"):
+    def publish_text(self, artifact: str, filename: str, text: str, schema: str = "text", blob_uri: Optional[str] = None):
         """Publish text artifact and register."""
         path = self.write_text(filename, text)
         if self.artifact_store:
@@ -66,7 +72,9 @@ class Sandbox:
                 artifact_id=artifact,
                 abs_path=str(Path(path).absolute()),
                 schema=schema,
-                producer_link_id=self.link_id
+                producer_link_id=self.link_id,
+                blob_uri=blob_uri,
+                is_shadow=self.is_shadow
             )
         return path
 

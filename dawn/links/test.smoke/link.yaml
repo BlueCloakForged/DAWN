@@ -1,0 +1,11 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.smoke
+spec:
+  requires: []
+  produces:
+    - artifactId: dawn.test.report
+      path: smoke_test_report.json
+    - artifactId: dawn.scenarios.report
+      path: scenarios_report.json

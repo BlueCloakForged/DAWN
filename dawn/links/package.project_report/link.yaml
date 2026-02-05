@@ -1,0 +1,15 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: package.project_report
+  description: Generates HTML project report with run metrics, budgets, and policy info
+spec:
+  requires:
+    - artifactId: dawn.project.descriptor
+    - artifactId: dawn.src.diff
+      optional: true
+    - artifactId: dawn.metrics.run_summary
+      optional: true
+  produces:
+    - artifactId: dawn.project.report
+      path: project_report.html

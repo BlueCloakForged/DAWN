@@ -89,18 +89,27 @@ def run(context, config):
     # Sort by path for determinism
     files.sort(key=lambda f: f["path"])
     
+    # Phase 2.2: Meta-Bundle (Context Binding)
+    meta_bundle = context.get("ephemeral_input", {})
+    
     # Compute bundle_sha256 from canonical representation
-    # Format: path:sha256:bytes\n for each file
+    # Format: path:sha256:bytes\n for each file + meta_bundle JSON
     canonical_parts = [f"{f['path']}:{f['sha256']}:{f['bytes']}" for f in files]
+    
+    # Include Meta-Bundle in the canonical string to force hash change on context shift
+    meta_json = json.dumps(meta_bundle, sort_keys=True)
+    canonical_parts.append(f"meta:{hashlib.sha256(meta_json.encode()).hexdigest()}")
+    
     canonical_str = "\n".join(canonical_parts)
     bundle_sha256 = hashlib.sha256(canonical_str.encode()).hexdigest()
     
     # Build deterministic manifest
     manifest = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_sha256": bundle_sha256,
         "root": "inputs",
-        "files": files
+        "files": files,
+        "meta_bundle": meta_bundle
     }
     
     # Debug logging

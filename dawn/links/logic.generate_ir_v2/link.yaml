@@ -1,0 +1,6 @@
+
+metadata:
+  name: logic.generate_ir_v2
+spec:
+  produces:
+    - artifact: dawn.project.ir

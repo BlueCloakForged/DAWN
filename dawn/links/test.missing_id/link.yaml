@@ -1,0 +1,9 @@
+
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.missing_id
+spec:
+  requires:
+    - artifact: "legacy.file" # Missing artifactId
+  produces: []

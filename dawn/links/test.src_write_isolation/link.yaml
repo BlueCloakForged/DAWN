@@ -1,0 +1,9 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.src_write_isolation
+  description: Test link that attempts src/ write (used to test isolation mode blocking)
+spec:
+  produces:
+    - artifactId: test.isolation_result
+      path: isolation_result.json

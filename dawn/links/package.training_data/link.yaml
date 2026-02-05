@@ -1,0 +1,18 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: package.training_data
+  description: "Aggregates healing and judgment metrics into DPO training signals"
+spec:
+  requires:
+    - artifact: dawn.healing.metrics
+      optional: true
+    - artifact: dawn.judge.score
+      optional: true
+    - artifact: dawn.project.bundle
+  produces:
+    - artifact: dawn.training.dpo_signal
+      schema: json
+  runtime:
+    timeoutSeconds: 60
+    retries: 1

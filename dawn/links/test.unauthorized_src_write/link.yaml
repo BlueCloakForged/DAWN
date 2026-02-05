@@ -1,0 +1,8 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.unauthorized_src_write
+spec:
+  produces:
+    - artifactId: test.void
+      path: void.json

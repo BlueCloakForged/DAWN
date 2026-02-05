@@ -1,0 +1,14 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: run.pytest_nonfatal
+spec:
+  description: Execute pytest but don't fail pipeline on test failures (for autofix workflows)
+  requires:
+    - artifactId: dawn.project.bundle
+  produces:
+    - artifactId: dawn.test.execution_report
+      path: pytest_report.json
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
