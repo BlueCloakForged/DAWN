@@ -1,0 +1,41 @@
+action_name: withdraw_change_request
+description: >
+  Retract a submitted change request, returning it to draft for further revision.
+  Only the authoring session may withdraw. Compensation restores submitted state if withdrawal
+  is later rolled back as part of a saga.
+resource_type: change_request
+action_family: mutate
+input_schema_ref: "schemas/change_request/withdraw_input.json"
+output_schema_ref: "schemas/change_request/withdraw_output.json"
+required_capabilities:
+  - change_request_modify
+idempotency_required: true
+idempotency_scope: resource
+risk_level: moderate
+consistency_profile: STRONG
+conflict_resolution_strategy: default
+compensation_strategy: inverse_action
+compensation_order_hint: 30
+participates_in_saga: true
+required_trust_tier: "T2/bounded"
+retry_class: safe_retry
+allowed_from_states:
+  - submitted
+transitions_to_state: draft
+guard_predicates:
+  - name: state_is_submitted
+    guard_type: state
+    parameters: {expected_state: submitted}
+    evaluation_order: 1
+  - name: requester_is_author
+    guard_type: permission
+    parameters: {check: session_owns_resource}
+    evaluation_order: 2
+side_effects:
+  - effect_type: version_increment
+    reversible: true
+    description: Resource version incremented on withdrawal.
+    target_resource: change_request
+budget_cost_units: 2.0
+budget_dimensions_consumed:
+  - mutate

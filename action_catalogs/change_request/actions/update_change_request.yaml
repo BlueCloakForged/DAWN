@@ -1,0 +1,41 @@
+action_name: update_change_request
+description: >
+  Modify the content of a change request while it is in draft state.
+  Requires an active edit lease held by the requesting session.
+  Changes are applied with strong consistency and may be compensated by restoring the prior version.
+resource_type: change_request
+action_family: mutate
+input_schema_ref: "schemas/change_request/update_input.json"
+output_schema_ref: "schemas/change_request/update_output.json"
+required_capabilities:
+  - change_request_edit
+idempotency_required: true
+idempotency_scope: resource
+risk_level: low
+consistency_profile: STRONG
+conflict_resolution_strategy: lease_first
+compensation_strategy: inverse_action
+compensation_order_hint: 10
+participates_in_saga: true
+required_trust_tier: "T2/bounded"
+retry_class: safe_retry
+allowed_from_states:
+  - draft
+transitions_to_state: draft
+guard_predicates:
+  - name: state_is_draft
+    guard_type: state
+    parameters: {expected_state: draft}
+    evaluation_order: 1
+  - name: edit_lease_held
+    guard_type: permission
+    parameters: {lease_type: edit, check: held_by_requesting_session}
+    evaluation_order: 2
+side_effects:
+  - effect_type: version_increment
+    reversible: true
+    description: Resource version is incremented on each successful update.
+    target_resource: change_request
+budget_cost_units: 1.0
+budget_dimensions_consumed:
+  - mutate

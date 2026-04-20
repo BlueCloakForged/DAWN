@@ -1,0 +1,40 @@
+action_name: reopen_change_request
+description: >
+  Reopen a rejected change request, returning it to draft for a new revision cycle.
+  This is an explicit new authoring path — not a compensation of the rejection.
+  Only the original author or an admin session may reopen.
+resource_type: change_request
+action_family: mutate
+input_schema_ref: "schemas/change_request/reopen_input.json"
+output_schema_ref: "schemas/change_request/reopen_output.json"
+required_capabilities:
+  - change_request_modify
+idempotency_required: true
+idempotency_scope: resource
+risk_level: moderate
+consistency_profile: STRONG
+conflict_resolution_strategy: default
+compensation_strategy: inverse_action
+participates_in_saga: false
+required_trust_tier: "T2/bounded"
+retry_class: safe_retry
+allowed_from_states:
+  - rejected
+transitions_to_state: draft
+guard_predicates:
+  - name: state_is_rejected
+    guard_type: state
+    parameters: {expected_state: rejected}
+    evaluation_order: 1
+  - name: requester_is_author_or_admin
+    guard_type: permission
+    parameters: {check: session_owns_resource_or_admin}
+    evaluation_order: 2
+side_effects:
+  - effect_type: version_increment
+    reversible: true
+    description: Resource version incremented on reopen.
+    target_resource: change_request
+budget_cost_units: 2.0
+budget_dimensions_consumed:
+  - mutate

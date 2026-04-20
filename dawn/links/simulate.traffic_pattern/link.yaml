@@ -1,0 +1,33 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: simulate.traffic_pattern
+  description: >-
+    Purple Team Adversary Emulation — Generates safe, non-malicious
+    Scapy-based Python scripts that replicate the timing, port usage,
+    and payload structure of confirmed malicious findings.  Used for
+    security sensor testing and closed-loop validation.
+spec:
+  requires:
+    - artifact: aipam.findings.reviewed
+      description: "Post-HITL confirmed findings"
+    - artifact: aipam.flow.ir
+      description: "Flow IR for network context"
+  produces:
+    - artifact: aipam.simulation.py
+      schema: text
+      path: simulation_script.py
+      description: "Scapy-based adversary emulation script"
+    - artifact: aipam.simulation.manifest
+      schema: json
+      path: simulation_manifest.json
+      description: "Manifest of generated simulations"
+  config:
+    model_name: "llama3.1:8b"
+    llm_endpoint: "http://localhost:11434"
+    temperature: 0.2
+    safe_mode: true
+    max_findings: 10
+  runtime:
+    timeoutSeconds: 600
+    retries: 0

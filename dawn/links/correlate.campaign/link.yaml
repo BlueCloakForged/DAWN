@@ -1,0 +1,22 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: correlate.campaign
+  description: >-
+    Cross-project campaign correlation. Scans sibling projects for
+    aipam.findings.ir artifacts and identifies "strong links" where
+    multiple cases share the same dest_ip + MITRE technique.
+spec:
+  requires:
+    - artifact: aipam.findings.ir
+  produces:
+    - artifact: aipam.campaign.correlation
+      schema: json
+      path: campaign_correlation.json
+      description: "Cross-case correlation groups with shared indicators"
+  config:
+    min_shared_projects: 2
+    confidence_boost_per_link: 0.1
+  runtime:
+    timeoutSeconds: 120
+    retries: 0

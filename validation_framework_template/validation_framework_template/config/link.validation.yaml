@@ -1,0 +1,21 @@
+apiVersion: dawn.links/v1
+kind: ValidationSelfHealLink
+metadata:
+  name: validation.self_heal
+  description: "Portable diagnostics + pattern-driven self-healing link"
+spec:
+  db:
+    path: "./logs/diagnostic_logs.db"
+    appName: "your_app_name"
+  patterns:
+    enabledPacks:
+      - "./validation_framework_template/patterns/system_fixes.json"
+      - "./validation_framework_template/patterns/sam_fixes.json"
+  sentry:
+    pollIntervalSeconds: 2
+    cooldownSeconds: 60
+    maxMemoryPercent: 85
+  actions:
+    allowedTypes: ["command", "script"]
+    # Optional safety guardrails (fill in when ready):
+    denylistSubstrings: ["rm -rf", "sudo", "curl ", "bash -c", "sh -c"]

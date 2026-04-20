@@ -1,0 +1,31 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: package.project_bundle
+spec:
+  description: "Generic packaging of project artifacts into a ZIP bundle"
+  requires:
+    - artifactId: dawn.project.descriptor
+    - artifactId: dawn.project.ir
+    - artifactId: validate.project_handoff.report
+    - artifactId: dawn.project.export.primary
+      optional: true
+    - artifactId: dawn.project.export.workflow
+      optional: true
+  produces:
+    - artifactId: package.project_bundle.zip
+      path: project_bundle.zip
+    - artifactId: package.project_bundle.manifest
+      path: manifest.json
+      schema:
+        type: json
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: validate_inputs
+      type: validator
+    - id: run
+      type: executor
+    - id: validate_outputs
+      type: validator

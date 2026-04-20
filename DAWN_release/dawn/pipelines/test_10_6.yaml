@@ -1,0 +1,7 @@
+id: test_10_6
+version: 1.0.0
+description: "Verification pipeline for Phase 10.6 (Live Logs)"
+profile: normal
+
+links:
+  - id: test.sleep_long

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluecloakforged.github.io/forgescaffold/schemas/ticket_ref.schema.json",
+  "title": "ForgeScaffold Ticket Reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ticket_id"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "ticket_id": {
+      "type": "string",
+      "description": "Normalized ticket identifier. Prefer FC-<digits>."
+    },
+    "ticket_system": {
+      "type": "string",
+      "enum": ["forgechain", "generic"],
+      "default": "forgechain"
+    },
+    "ticket_url": {"type": ["string", "null"]},
+    "title": {"type": ["string", "null"]},
+    "labels": {
+      "type": "array",
+      "items": {"type": "string"},
+      "default": []
+    },
+    "owner": {"type": ["string", "null"]},
+    "state": {
+      "type": "string",
+      "enum": ["open", "in_progress", "blocked", "closed"],
+      "default": "open"
+    },
+    "created_at": {"type": ["string", "null"], "format": "date-time"},
+    "updated_at": {"type": ["string", "null"], "format": "date-time"}
+  }
+}

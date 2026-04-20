@@ -1,0 +1,337 @@
+{
+  "$id": "https://bluecloakforged.github.io/forgescaffold/schemas/log_envelope.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "result": {
+            "enum": [
+              "error",
+              "timeout"
+            ]
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "then": {
+        "required": [
+          "error"
+        ]
+      }
+    }
+  ],
+  "properties": {
+    "agent": {
+      "additionalProperties": false,
+      "description": "Agent-specific metadata (hashes/ids only).",
+      "properties": {
+        "model_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "prompt_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "retrieval_ids": {
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        "session_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "step_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "tool_call_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "tool_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "counts": {
+      "additionalProperties": false,
+      "description": "Optional quantitative counters for the event.",
+      "properties": {
+        "bytes_in": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "bytes_out": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "items_in": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "items_out": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "retries": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "duration_ms": {
+      "description": "Duration in milliseconds when applicable.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "error": {
+      "additionalProperties": false,
+      "description": "Structured error details. Present when result=error/timeout.",
+      "properties": {
+        "cause_chain": {
+          "description": "Optional causal chain of error classes/messages.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "class": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "message": {
+                "maxLength": 4096,
+                "type": "string"
+              }
+            },
+            "required": [
+              "class"
+            ],
+            "type": "object"
+          },
+          "maxItems": 16,
+          "type": "array"
+        },
+        "class": {
+          "description": "Error class/type name.",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "message": {
+          "description": "Short error message. Avoid dumping secrets.",
+          "maxLength": 4096,
+          "type": "string"
+        },
+        "stacktrace": {
+          "description": "Optional stacktrace; may be omitted in prod.",
+          "maxLength": 65535,
+          "type": "string"
+        }
+      },
+      "required": [
+        "class"
+      ],
+      "type": "object"
+    },
+    "event": {
+      "description": "Optional finer-grained event label within an operation lifecycle.",
+      "enum": [
+        "start",
+        "progress",
+        "end",
+        "decision",
+        "retry",
+        "timeout",
+        "cache_hit",
+        "cache_miss",
+        "heartbeat",
+        "custom"
+      ],
+      "type": "string"
+    },
+    "ext": {
+      "additionalProperties": true,
+      "description": "Extension bag for forward compatibility. Use for new fields before schema bumps.",
+      "type": "object"
+    },
+    "input_fingerprint": {
+      "description": "Hash/fingerprint of inputs (e.g., sha256:<hex>). Avoid raw payloads.",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "io": {
+      "additionalProperties": false,
+      "description": "Optional structured I/O boundary metadata (no payloads).",
+      "properties": {
+        "kind": {
+          "enum": [
+            "none",
+            "filesystem",
+            "database",
+            "network",
+            "subprocess",
+            "retrieval",
+            "cache"
+          ],
+          "type": "string"
+        },
+        "method": {
+          "description": "HTTP method, DB operation, tool action, etc.",
+          "maxLength": 64,
+          "type": "string"
+        },
+        "status_code": {
+          "maximum": 599,
+          "minimum": 100,
+          "type": "integer"
+        },
+        "target": {
+          "description": "Target identifier like path, DSN alias, host/service name, tool name. Avoid secrets.",
+          "maxLength": 512,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "message": {
+      "description": "Human-readable log message. Keep short; avoid sensitive data.",
+      "maxLength": 4096,
+      "type": "string"
+    },
+    "operation": {
+      "description": "Operation name (function, endpoint, tool name, job phase, etc.).",
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "output_fingerprint": {
+      "description": "Hash/fingerprint of outputs (e.g., sha256:<hex>).",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "parent_span_id": {
+      "description": "Parent span identifier if available.",
+      "pattern": "^[0-9a-f]{16}$",
+      "type": "string"
+    },
+    "result": {
+      "description": "Outcome classification for the operation/event.",
+      "enum": [
+        "ok",
+        "error",
+        "cancelled",
+        "skipped",
+        "timeout"
+      ],
+      "type": "string"
+    },
+    "run_id": {
+      "description": "Correlation ID for the end-to-end execution (DAWN pipeline run, request, job, etc.).",
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "schema_version": {
+      "description": "Version of this log envelope schema.",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "type": "string"
+    },
+    "security": {
+      "additionalProperties": false,
+      "description": "Optional security controls metadata.",
+      "properties": {
+        "decision": {
+          "enum": [
+            "allow",
+            "deny",
+            "defer"
+          ],
+          "type": "string"
+        },
+        "policy_profile": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reason_code": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "severity": {
+      "description": "Log severity level.",
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ],
+      "type": "string"
+    },
+    "span_id": {
+      "description": "Distributed tracing span identifier (OpenTelemetry compatible).",
+      "pattern": "^[0-9a-f]{16}$",
+      "type": "string"
+    },
+    "timestamp": {
+      "description": "RFC3339/ISO8601 timestamp of the event. Prefer UTC with 'Z'.",
+      "format": "date-time",
+      "type": "string"
+    },
+    "trace_id": {
+      "description": "Distributed tracing trace identifier (OpenTelemetry compatible).",
+      "pattern": "^[0-9a-f]{16}|[0-9a-f]{32}$",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "Stable identifier of the unit emitting this log (module/service/agent_step). Use system_catalog unit id.",
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "unit_type": {
+      "description": "Type of emitting unit.",
+      "enum": [
+        "module",
+        "service",
+        "agent_step",
+        "datastore",
+        "external_dependency"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "timestamp",
+    "severity",
+    "run_id",
+    "unit_id",
+    "operation",
+    "result"
+  ],
+  "title": "ForgeScaffold Log Envelope",
+  "type": "object"
+}

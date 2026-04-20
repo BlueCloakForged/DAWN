@@ -1,0 +1,73 @@
+{
+  "edges": [
+    {
+      "evidence": [
+        {
+          "file": "src/todo_cli/storage.py",
+          "line": null,
+          "note": "touches data"
+        }
+      ],
+      "from": "src.todo_cli",
+      "to": "datastore.data",
+      "type": "writes"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "datastore.data",
+      "language": "config",
+      "path": "data",
+      "type": "datastore"
+    },
+    {
+      "id": "external.grpc",
+      "language": "python",
+      "path": "detected",
+      "type": "external_dependency"
+    },
+    {
+      "id": "external.httpx",
+      "language": "python",
+      "path": "detected",
+      "type": "external_dependency"
+    },
+    {
+      "id": "external.pinecone",
+      "language": "python",
+      "path": "detected",
+      "type": "external_dependency"
+    },
+    {
+      "id": "external.requests",
+      "language": "python",
+      "path": "detected",
+      "type": "external_dependency"
+    },
+    {
+      "id": "external.subprocess",
+      "language": "python",
+      "path": "detected",
+      "type": "external_dependency"
+    },
+    {
+      "id": "external.vectorstore",
+      "language": "python",
+      "path": "detected",
+      "type": "external_dependency"
+    },
+    {
+      "id": "src.tests",
+      "language": "python",
+      "path": "src/tests",
+      "type": "module"
+    },
+    {
+      "id": "src.todo_cli",
+      "language": "python",
+      "path": "src/todo_cli",
+      "type": "module"
+    }
+  ],
+  "project_id": "app_mvp"
+}

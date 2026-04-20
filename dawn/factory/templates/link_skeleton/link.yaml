@@ -1,0 +1,35 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: {{link_id}}
+spec:
+  description: {{description}}
+  requires:
+    - artifactId: "source.link.output"
+      from_link: "source.link"
+      optional: false
+      schema:
+        type: "json"
+      when:
+        condition: "always"
+  produces:
+    - artifactId: "{{link_id}}.output"
+      path: "output.json"
+      schema:
+        type: "json"
+      classify:
+        kind: "generic_output"
+      retention:
+        ttl_days: 90
+  runtime:
+    timeoutSeconds: 600
+    retries: 0
+  steps:
+    - id: validate_inputs
+      type: validator
+    - id: run
+      type: executor
+    - id: validate_outputs
+      type: validator
+    - id: emit_ledger
+      type: ledger

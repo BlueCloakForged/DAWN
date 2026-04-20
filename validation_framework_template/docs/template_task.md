@@ -1,0 +1,41 @@
+# Task: Diagnostic Pipeline System Implementation
+
+- [x] Planning & Design
+    - [x] Research existing logging
+    - [x] Create implementation plan
+- [x] Datastore Implementation
+    - [x] Create `DiagnosticLogger` in `utils/diagnostic_logger.py`
+    - [x] Initialize `diagnostic_logs.db` schema
+- [x] System Integration
+    - [x] Redirect or capture terminal output in `start_sam_full.py`
+    - [x] Integrate diagnostic logging into core components
+- [x] Query System Development
+    - [x] Implement `scripts/query_diagnostic_logs.py`
+    - [x] Add keyword filtering (Error, failure, etc.)
+- [x] Verification
+    - [x] Verify log capture during startup
+    - [x] Test query system with mock errors
+- [x] WebUI Integration
+    - [x] Research `secure_streamlit_app.py` for button event hooks
+    - [x] Implement `log_ui_event` helper in `DiagnosticLogger`
+    - [x] Integrate UI event logging for key buttons (Deep Research, Synthesis, etc.)
+    - [x] Complete instrumentation for all interaction points (Bulk Ingestion, etc.)
+- [x] Correlation & Querying
+    - [x] Update `query_diagnostic_logs.py` to show linked UI/Terminal events
+    - [x] Final end-to-end verification
+- [x] Phase 3: Error Surface & Stress Testing
+    - [x] Implement automated error hooking in `secure_streamlit_app.py`
+    - [x] Instrument `ui/chat_ui.py` (Messages & Tools)
+    - [x] Instrument `ui/autonomy_dashboard.py` (Agent operations)
+    - [x] Instrument `ui/memory_app.py` (Bulk memory operations)
+    - [x] Create stress test for SQLite concurrency
+- [x] Phase 4: Engine Stability & Deduplication
+    - [x] Fix "Deep Research Engine not available" import issue
+    - [x] Restore `arxiv_id` in vetting metadata to enable deduplication
+    - [x] Implement and run vetting queue cleanup script
+    - [x] Verify UI consistency in Vetting Queue
+- [x] Phase 5: Database Concurrency & Lock Resolution
+    - [x] Implement SQLite connection helper with 30s timeout
+    - [x] Add batched archival support to `InsightArchive`
+    - [x] Update UI to use batched archival and session-level deduplication
+    - [x] Run and pass multi-threaded concurrency stress tests

@@ -1,0 +1,40 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: aipam.ingest.security_onion
+  description: >-
+    Source-agnostic Security Onion ingest link. Connects to Security Onion
+    via API or filesystem mode, pulls PCAP/log data for the specified time
+    range and sensors, extracts flows via Zeek/Suricata or parses existing
+    SO Zeek logs, and produces the unified aipam.flow.ir schema.
+spec:
+  requires: []
+  produces:
+    - artifact: aipam.flow.ir
+      schema: json
+      path: flow_ir.json
+      description: "Unified flow + alert IR (source-agnostic)"
+    - artifact: dawn.project.bundle
+      schema: json
+      path: dawn.project.bundle.json
+      description: "Provenance bundle for ingested SO data"
+  config:
+    sensitivity: "LOW"
+    mode: "filesystem"
+    api_url: ""
+    api_token: ""
+    base_pcap_path: "/opt/so/pcap"
+    zeek_log_path: "/opt/so/log/zeek"
+    suricata_log_path: "/opt/so/log/suricata"
+    time_range:
+      start: ""
+      end: ""
+    sensors: []
+    zeek_binary: "zeek"
+    suricata_binary: "suricata"
+    suricata_config: "/etc/suricata/suricata.yaml"
+    max_flows: 10000
+  runtime:
+    timeoutSeconds: 600
+    retries: 1
+    alwaysRun: true

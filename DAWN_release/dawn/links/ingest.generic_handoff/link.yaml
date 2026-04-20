@@ -1,0 +1,12 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: ingest.generic_handoff
+spec:
+  requires: []
+  produces:
+    - artifactId: dawn.project.descriptor
+      path: project_descriptor.json
+    - artifactId: dawn.project.ir
+      path: project_ir.json
+      schema: { type: json, ref: "dawn.project.ir" }

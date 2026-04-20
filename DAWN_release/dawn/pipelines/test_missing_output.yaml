@@ -1,0 +1,8 @@
+pipelineId: "test_missing_output"
+links:
+  - id: quality.gates
+overrides:
+  quality.gates:
+    spec:
+      produces:
+        - artifact: required_output.json

@@ -1,0 +1,131 @@
+# DAWN Runtime Policy
+version: 2.1.0
+
+# ════════════════════════════════════════════════════════════════════
+# PHASE 9.1: RETRY POLICY
+# ════════════════════════════════════════════════════════════════════
+retry:
+  # Maximum retries per link execution
+  max_retries_per_link: 3
+
+  # Maximum retries per project (across all links)
+  max_retries_per_project: 10
+
+  # Backoff schedule (deterministic): delays in seconds between retries
+  # retry 1 -> wait backoff_schedule[0], retry 2 -> wait backoff_schedule[1], etc.
+  backoff_schedule:
+    - 1 # 1 second after first failure
+    - 5 # 5 seconds after second failure
+    - 30 # 30 seconds after third failure
+
+  # Error types that are retryable (transient failures)
+  retryable_errors:
+    - BUDGET_TIMEOUT # Might succeed with more time on retry
+    - RUNTIME_ERROR # Generic errors may be transient
+
+  # Error types that are NOT retryable (permanent failures)
+  non_retryable_errors:
+    - CONTRACT_VIOLATION # Contract issues won't fix themselves
+    - MISSING_REQUIRED_ARTIFACT
+    - PRODUCED_ARTIFACT_MISSING
+    - AMBIGUOUS_ARTIFACT_ORIGIN
+    - POLICY_VIOLATION # Policy violations are deterministic
+    - SCHEMA_INVALID # Schema issues won't fix themselves
+    - BUDGET_OUTPUT_LIMIT # Output too large - won't change
+    - BUDGET_PROJECT_LIMIT # Project too large - won't change
+
+# ════════════════════════════════════════════════════════════════════
+# PHASE 9.2: ARTIFACT RETENTION
+# ════════════════════════════════════════════════════════════════════
+retention:
+  # Keep the last N successful runs per project
+  keep_last_n_runs: 3
+
+  # Always keep the last successful evidence pack (for audit)
+  always_keep_evidence_pack: true
+
+  # Keep artifacts from failed runs for debugging (days)
+  keep_failed_runs_days: 7
+
+  # Never delete these artifact types (for auditability)
+  protected_artifacts:
+    - dawn.evidence.pack
+    - dawn.release.bundle
+    - dawn.metrics.run_summary
+
+  # Never delete ledger events (append-only audit log)
+  preserve_ledger: true
+
+budgets:
+  per_link:
+    max_wall_time_sec: 60 # hard timeout enforced
+    max_output_bytes: 10485760 # 10MB
+    max_cpu_sec: 120 # best-effort (optional; psutil)
+    max_mem_mb: 512 # best-effort (optional; psutil)
+
+  per_pipeline:
+    max_wall_time_sec: 1800 # 30 minutes total runtime (optional phase 8.3.5)
+
+  per_project:
+    max_project_bytes: 1073741824 # 1GB preflight check
+
+security:
+  allowed_write_roots:
+    - artifacts
+    - ledger
+    - src
+
+  allow_src_writes:
+    - impl.scaffold_repo
+    - impl.apply_patchset
+    - test.smoke
+
+  allowed_subprocess_commands:
+    - python3
+    - pytest
+    - git
+
+profiles:
+  normal:
+    allow_src_writes: true
+    subprocess_whitelist: true
+    timeout_multiplier: 1.0
+    artifact_only_outputs: false
+
+  isolation:
+    allow_src_writes: false
+    subprocess_whitelist: true
+    allowed_subprocess_commands:
+      - python3
+      - pytest
+    timeout_multiplier: 0.5
+    allowed_input_extensions:
+      - .json
+      - .yaml
+      - .yml
+      - .md
+      - .txt
+      - .py # Required for run.pytest link (agent code execution)
+    artifact_only_outputs: true
+
+default_profile: normal
+
+error_codes:
+  # Contract / composition
+  - CONTRACT_VIOLATION
+  - MISSING_REQUIRED_ARTIFACT
+  - PRODUCED_ARTIFACT_MISSING
+  - AMBIGUOUS_ARTIFACT_ORIGIN
+
+  # Runtime / policy
+  - RUNTIME_ERROR
+  - POLICY_VIOLATION
+
+  # Schema
+  - SCHEMA_INVALID
+
+  # Budgets (Phase 8.3)
+  - BUDGET_TIMEOUT
+  - BUDGET_OUTPUT_LIMIT
+  - BUDGET_PROJECT_LIMIT
+  - BUDGET_PIPELINE_TIMEOUT

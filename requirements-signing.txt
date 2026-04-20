@@ -1,0 +1,2 @@
+# Signing-only dependencies for ForgeScaffold Phase 5+
+cryptography==46.0.5

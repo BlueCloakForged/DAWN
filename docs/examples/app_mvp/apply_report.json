@@ -1,0 +1,21 @@
+{
+  "applied_ops": 0,
+  "bundle_content_sha256_expected": "9612cfcde59120f625526e99aae27385f8fa6b647376c835405c4ce894e40b64",
+  "bundle_content_sha256_observed": "9612cfcde59120f625526e99aae27385f8fa6b647376c835405c4ce894e40b64",
+  "failed_ops": 0,
+  "operations": {
+    "applied": [],
+    "failed": [],
+    "skipped": [
+      {
+        "op": "add",
+        "path": "src/forgescaffold_logging.py",
+        "post_hash": "832cbcdbab724cd3cb787ee54b3c5a9f7d59e892d23e3980e0f7944581a3370d",
+        "pre_hash": "832cbcdbab724cd3cb787ee54b3c5a9f7d59e892d23e3980e0f7944581a3370d",
+        "reason": "skipped_existing"
+      }
+    ]
+  },
+  "skipped_ops": 1,
+  "status": "SKIPPED"
+}

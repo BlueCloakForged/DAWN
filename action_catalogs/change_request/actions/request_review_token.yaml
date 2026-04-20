@@ -1,0 +1,34 @@
+action_name: request_review_token
+description: >
+  Claim a validation_gate token to begin reviewing a submitted change request.
+  Token capacity limits concurrent reviewers. Once held, the reviewer may approve or reject.
+resource_type: change_request
+action_family: mutate
+input_schema_ref: "schemas/change_request/request_review_token_input.json"
+output_schema_ref: "schemas/change_request/request_review_token_output.json"
+required_capabilities:
+  - change_request_review
+idempotency_required: true
+idempotency_scope: resource
+risk_level: low
+consistency_profile: STRONG
+conflict_resolution_strategy: queue_first
+compensation_strategy: inverse_action
+participates_in_saga: false
+required_trust_tier: "T2/bounded"
+retry_class: queue_then_retry
+allowed_from_states:
+  - submitted
+guard_predicates:
+  - name: state_is_submitted
+    guard_type: state
+    parameters: {expected_state: submitted}
+    evaluation_order: 1
+  - name: review_token_available
+    guard_type: permission
+    parameters: {token_type: validation_gate, check: capacity_available}
+    evaluation_order: 2
+side_effects: []
+budget_cost_units: 1.0
+budget_dimensions_consumed:
+  - mutate

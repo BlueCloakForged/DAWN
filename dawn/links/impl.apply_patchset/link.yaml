@@ -1,0 +1,12 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: impl.apply_patchset
+spec:
+  requires:
+    - artifactId: dawn.patchset
+    - artifactId: dawn.gate.patch_decision
+      optional: true
+  produces:
+    - artifactId: dawn.patch.applied
+      path: applied.json

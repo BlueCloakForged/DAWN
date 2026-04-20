@@ -1,0 +1,13 @@
+{
+  "generator": {
+    "name": "forgescaffold.apply_patchset.rollback",
+    "version": "1.0.0"
+  },
+  "operations": [],
+  "patchset_id": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "schema_version": "1.0.1",
+  "target": {
+    "bundle_content_sha256": "9612cfcde59120f625526e99aae27385f8fa6b647376c835405c4ce894e40b64",
+    "project_id": "app_mvp"
+  }
+}

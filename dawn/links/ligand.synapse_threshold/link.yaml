@@ -1,0 +1,7 @@
+metadata:
+  name: ligand.synapse_threshold
+spec:
+  requires:
+    - artifact: ligand.pool.snapshot.json
+  produces:
+    - artifact: ligand.gate_open

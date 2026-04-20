@@ -1,0 +1,30 @@
+pipelineId: meaning_gate_v1
+description: "Demonstrates Contracted Intent (Meaning Gates) with Release Verification"
+links:
+  # 1. Ingest physical state
+  - id: ingest.project_bundle
+    spec:
+      runtime:
+        alwaysRun: true
+
+  # 2. Ingest meaning state (The Gate)
+  - id: spec.requirements
+
+  # 3. Dual-binding HITL Approval
+  - id: hitl.gate
+    config:
+      mode: BLOCKED
+
+  # 4. Dummy work (to produce test report for DoD)
+  - id: test.smoke
+    spec:
+      produces:
+        - artifact: test.smoke.report
+          path: report.json
+          schema: json
+
+  # 5. Diff Audit
+  - id: quality.project_diff
+
+  # 6. Release Audit
+  - id: quality.release_verifier

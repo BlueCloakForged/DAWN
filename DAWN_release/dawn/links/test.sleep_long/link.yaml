@@ -1,0 +1,11 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.sleep_long
+  description: Test link that sleeps for 10 seconds (used to test BUDGET_TIMEOUT)
+spec:
+  produces:
+    - artifactId: test.sleep_result
+      path: sleep_result.json
+    - artifactId: verification_artifact.txt
+      path: verification_artifact.txt

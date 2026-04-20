@@ -1,0 +1,34 @@
+action_name: request_edit_lease
+description: >
+  Acquire an exclusive edit lease on a change request in draft state.
+  Prevents concurrent mutation by other sessions until the lease expires or is released.
+resource_type: change_request
+action_family: mutate
+input_schema_ref: "schemas/change_request/request_edit_lease_input.json"
+output_schema_ref: "schemas/change_request/request_edit_lease_output.json"
+required_capabilities:
+  - change_request_edit
+idempotency_required: true
+idempotency_scope: resource
+risk_level: low
+consistency_profile: STRONG
+conflict_resolution_strategy: lease_first
+compensation_strategy: inverse_action
+participates_in_saga: false
+required_trust_tier: "T2/bounded"
+retry_class: recheck_then_retry
+allowed_from_states:
+  - draft
+guard_predicates:
+  - name: state_is_draft
+    guard_type: state
+    parameters: {expected_state: draft}
+    evaluation_order: 1
+  - name: no_active_lease_held_by_other
+    guard_type: permission
+    parameters: {lease_type: edit, check: no_conflicting_holder}
+    evaluation_order: 2
+side_effects: []
+budget_cost_units: 1.0
+budget_dimensions_consumed:
+  - mutate

@@ -1,0 +1,5 @@
+metadata:
+  name: math.multiplier
+spec:
+  produces:
+    - artifact: multiplier_result

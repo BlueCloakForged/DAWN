@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "kind": "doc",
+      "path": "test_harness/README.md"
+    },
+    {
+      "kind": "test",
+      "path": "test_harness/tests/test_l0_smoke.py"
+    }
+  ],
+  "language": "python",
+  "root": "test_harness"
+}

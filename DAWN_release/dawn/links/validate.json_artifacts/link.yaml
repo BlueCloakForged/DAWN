@@ -1,0 +1,13 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: validate.json_artifacts
+  version: 1.0.0
+  description: Validates JSON artifacts at boundary - parseability and minimal schema
+spec:
+  requires: [] # Dynamically configured
+  produces: []
+config:
+  artifacts_to_validate: []
+  enforce_schema_version: true
+  enforce_generator_id: false

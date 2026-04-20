@@ -1,0 +1,9 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: test.large_output
+  description: Test link that writes a large file (used to test BUDGET_OUTPUT_LIMIT)
+spec:
+  produces:
+    - artifactId: test.large_file
+      path: large_file.bin

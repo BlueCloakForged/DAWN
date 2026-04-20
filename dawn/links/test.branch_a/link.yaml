@@ -1,0 +1,5 @@
+metadata:
+  name: test.branch_a
+spec:
+  produces:
+    - artifact: branch_a

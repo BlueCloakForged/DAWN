@@ -1,0 +1,51 @@
+action_name: deploy_change_request
+description: >
+  Deploy an approved change request to the target environment. Operates under async
+  projection consistency — the deploying agent must confirm the approval projection
+  is within tolerance before proceeding. Requires a human gate and T4 trust.
+  Saga handler provides rollback coverage across deployment steps.
+resource_type: change_request
+action_family: deploy
+input_schema_ref: "schemas/change_request/deploy_input.json"
+output_schema_ref: "schemas/change_request/deploy_output.json"
+required_capabilities:
+  - change_request_deploy
+idempotency_required: true
+idempotency_scope: resource
+risk_level: critical
+consistency_profile: ASYNC_PROJECTION
+projection_tolerance_ms: 5000
+authoritative_recheck_required: true
+conflict_resolution_strategy: policy_first
+compensation_strategy: saga_handler
+participates_in_saga: true
+required_trust_tier: "T4/governed_critical"
+retry_class: recheck_then_retry
+allowed_from_states:
+  - approved
+guard_predicates:
+  - name: state_is_approved
+    guard_type: state
+    parameters: {expected_state: approved}
+    evaluation_order: 1
+  - name: human_gate_satisfied
+    guard_type: custom
+    parameters: {gate: human_approval_confirmed, timeout_ms: 300000}
+    evaluation_order: 2
+  - name: projection_within_tolerance
+    guard_type: custom
+    parameters: {max_lag_ms: 5000}
+    evaluation_order: 3
+side_effects:
+  - effect_type: external_api_call
+    reversible: false
+    description: Triggers deployment pipeline; compensation requires saga handler rollback.
+    target_system: deployment_pipeline
+  - effect_type: event_emit
+    reversible: false
+    description: Emits ChangeRequestDeployed event on success.
+    target_system: audit_log
+budget_cost_units: 10.0
+budget_dimensions_consumed:
+  - mutate
+  - high_risk

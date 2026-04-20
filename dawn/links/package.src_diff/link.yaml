@@ -1,0 +1,10 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: package.src_diff
+spec:
+  requires:
+    - artifactId: dawn.patch.applied
+  produces:
+    - artifactId: dawn.src.diff
+      path: src_diff.json

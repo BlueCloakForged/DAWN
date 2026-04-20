@@ -1,0 +1,28 @@
+{
+  "checkpoint_last_entry_hash": "7dc88d858c2e0228ce4ce1832649c7ffa2eeec00a3828c28afa5879b6ed1d79a",
+  "computed_last_entry_hash": "7dc88d858c2e0228ce4ce1832649c7ffa2eeec00a3828c28afa5879b6ed1d79a",
+  "entry_count": 1,
+  "error_codes": [
+    "ENTRY_HASH_MISMATCH"
+  ],
+  "first_bad_line": 1,
+  "signers": [
+    {
+      "errors": [],
+      "expired": false,
+      "fingerprint": "7fd19db74ae25eed9b5bf3c8b391fc01008477efa548b182570ac1b80feb206f",
+      "scope_ok": true,
+      "signature_valid": true,
+      "trusted": true
+    },
+    {
+      "errors": [],
+      "expired": false,
+      "fingerprint": "12d9fe3c458f0c84ecf4eadf46dd09bf96a4e470ed7fa78a3597e0062d5589f9",
+      "scope_ok": true,
+      "signature_valid": true,
+      "trusted": true
+    }
+  ],
+  "status": "FAIL"
+}

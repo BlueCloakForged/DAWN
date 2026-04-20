@@ -1,0 +1,154 @@
+name: ForgeScaffold Gates
+
+on:
+  push:
+    paths:
+      - 'dawn/links/forgescaffold.*/**'
+      - 'dawn/pipelines/forgescaffold_blueprint.yaml'
+      - 'dawn/pipelines/forgescaffold_blueprint_v2.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v1.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v1_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v2_hunks.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v3_hitl.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v3_hitl_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v4_review_hitl.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v4_review_hitl_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v5_risk_index.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v5_risk_index_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v6_multisig.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v6_multisig_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v7_operational.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v7_operational_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v8_integrity.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v8_integrity_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v9_cache.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v9_cache_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_global_ops_v10.yaml'
+      - 'dawn/schemas/*forgescaffold*.json'
+      - 'scripts/verify_forgescaffold_phase1.py'
+      - 'scripts/verify_forgescaffold_phase2.py'
+      - 'scripts/verify_forgescaffold_phase3.py'
+      - 'scripts/verify_forgescaffold_phase4.py'
+      - 'scripts/verify_forgescaffold_phase5.py'
+      - 'scripts/verify_forgescaffold_phase6.py'
+      - 'scripts/verify_forgescaffold_phase7.py'
+      - 'scripts/verify_forgescaffold_phase8.py'
+      - 'scripts/verify_forgescaffold_phase9.py'
+      - 'scripts/verify_forgescaffold_phase10.py'
+      - 'scripts/verify_forgescaffold_phase11.py'
+      - 'scripts/verify_forgescaffold_phase12.py'
+      - 'scripts/verify_forgescaffold_phase13c_cli.py'
+      - 'scripts/forgescaffold_cli.py'
+      - 'dawn/policy/runtime_policy.yaml'
+      - 'dawn/policy/trusted_signers.yaml'
+      - 'docs/examples/app_mvp/**'
+      - '.github/workflows/forgescaffold_gates.yml'
+  pull_request:
+    paths:
+      - 'dawn/links/forgescaffold.*/**'
+      - 'dawn/pipelines/forgescaffold_blueprint.yaml'
+      - 'dawn/pipelines/forgescaffold_blueprint_v2.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v1.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v1_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v2_hunks.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v3_hitl.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v3_hitl_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v4_review_hitl.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v4_review_hitl_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v5_risk_index.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v5_risk_index_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v6_multisig.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v6_multisig_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v7_operational.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v7_operational_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v8_integrity.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v8_integrity_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v9_cache.yaml'
+      - 'dawn/pipelines/forgescaffold_apply_v9_cache_runnable.yaml'
+      - 'dawn/pipelines/forgescaffold_global_ops_v10.yaml'
+      - 'dawn/schemas/*forgescaffold*.json'
+      - 'scripts/verify_forgescaffold_phase1.py'
+      - 'scripts/verify_forgescaffold_phase2.py'
+      - 'scripts/verify_forgescaffold_phase3.py'
+      - 'scripts/verify_forgescaffold_phase4.py'
+      - 'scripts/verify_forgescaffold_phase5.py'
+      - 'scripts/verify_forgescaffold_phase6.py'
+      - 'scripts/verify_forgescaffold_phase7.py'
+      - 'scripts/verify_forgescaffold_phase8.py'
+      - 'scripts/verify_forgescaffold_phase9.py'
+      - 'scripts/verify_forgescaffold_phase10.py'
+      - 'scripts/verify_forgescaffold_phase11.py'
+      - 'scripts/verify_forgescaffold_phase12.py'
+      - 'scripts/verify_forgescaffold_phase13c_cli.py'
+      - 'scripts/forgescaffold_cli.py'
+      - 'dawn/policy/runtime_policy.yaml'
+      - 'dawn/policy/trusted_signers.yaml'
+      - 'docs/examples/app_mvp/**'
+      - '.github/workflows/forgescaffold_gates.yml'
+
+jobs:
+  forgescaffold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-signing.txt
+          pip install jsonschema pyyaml ruff black
+
+      - name: Lint ForgeScaffold links
+        run: |
+          ruff check dawn/links/forgescaffold.system_catalog dawn/links/forgescaffold.map_dataflow dawn/links/forgescaffold.test_matrix dawn/links/forgescaffold.obs_define_schema dawn/links/forgescaffold.obs_instrument_patchset dawn/links/forgescaffold.apply_patchset dawn/links/forgescaffold.verify_post_apply dawn/links/forgescaffold.package_evidence dawn/links/forgescaffold.gate_patchset_approval dawn/links/forgescaffold.sign_evidence dawn/links/forgescaffold.verify_rollback dawn/links/forgescaffold.verify_evidence dawn/links/forgescaffold.generate_review_packet dawn/links/forgescaffold.generate_approval_template dawn/links/forgescaffold.update_evidence_index dawn/links/forgescaffold.query_evidence_index dawn/links/forgescaffold.prune_evidence dawn/links/forgescaffold.status dawn/links/forgescaffold.write_index_checkpoint dawn/links/forgescaffold.verify_index_integrity dawn/links/forgescaffold.build_index_cache dawn/links/forgescaffold.verify_cache_integrity dawn/links/forgescaffold.write_compaction_summary dawn/links/forgescaffold.build_global_catalog dawn/links/forgescaffold.query_global_evidence dawn/links/forgescaffold.build_all_caches dawn/links/forgescaffold.status_global dawn/links/forgescaffold_common scripts/verify_forgescaffold_phase1.py scripts/verify_forgescaffold_phase2.py scripts/verify_forgescaffold_phase3.py scripts/verify_forgescaffold_phase4.py scripts/verify_forgescaffold_phase5.py scripts/verify_forgescaffold_phase6.py scripts/verify_forgescaffold_phase7.py scripts/verify_forgescaffold_phase8.py scripts/verify_forgescaffold_phase9.py scripts/verify_forgescaffold_phase10.py scripts/verify_forgescaffold_phase11.py scripts/verify_forgescaffold_phase12.py
+          black --check dawn/links/forgescaffold.system_catalog dawn/links/forgescaffold.map_dataflow dawn/links/forgescaffold.test_matrix dawn/links/forgescaffold.obs_define_schema dawn/links/forgescaffold.obs_instrument_patchset dawn/links/forgescaffold.apply_patchset dawn/links/forgescaffold.verify_post_apply dawn/links/forgescaffold.package_evidence dawn/links/forgescaffold.gate_patchset_approval dawn/links/forgescaffold.sign_evidence dawn/links/forgescaffold.verify_rollback dawn/links/forgescaffold.verify_evidence dawn/links/forgescaffold.generate_review_packet dawn/links/forgescaffold.generate_approval_template dawn/links/forgescaffold.update_evidence_index dawn/links/forgescaffold.query_evidence_index dawn/links/forgescaffold.prune_evidence dawn/links/forgescaffold.status dawn/links/forgescaffold.write_index_checkpoint dawn/links/forgescaffold.verify_index_integrity dawn/links/forgescaffold.build_index_cache dawn/links/forgescaffold.verify_cache_integrity dawn/links/forgescaffold.write_compaction_summary dawn/links/forgescaffold.build_global_catalog dawn/links/forgescaffold.query_global_evidence dawn/links/forgescaffold.build_all_caches dawn/links/forgescaffold.status_global dawn/links/forgescaffold_common scripts/verify_forgescaffold_phase1.py scripts/verify_forgescaffold_phase2.py scripts/verify_forgescaffold_phase3.py scripts/verify_forgescaffold_phase4.py scripts/verify_forgescaffold_phase5.py scripts/verify_forgescaffold_phase6.py scripts/verify_forgescaffold_phase7.py scripts/verify_forgescaffold_phase8.py scripts/verify_forgescaffold_phase9.py scripts/verify_forgescaffold_phase10.py scripts/verify_forgescaffold_phase11.py scripts/verify_forgescaffold_phase12.py
+
+      - name: Run ForgeScaffold Phase 1 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase1.py --project forgescaffold_ci --bootstrap
+      - name: Run ForgeScaffold Phase 2 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase2.py --project forgescaffold_ci --bootstrap
+      - name: Run ForgeScaffold Phase 3 verifier (runnable-only bootstrap)
+        run: |
+          python scripts/verify_forgescaffold_phase3.py --project forgescaffold_ci --bootstrap --profile forgescaffold_apply_lowrisk --pipeline dawn/pipelines/forgescaffold_apply_v1_runnable.yaml --mode runnable_only
+      - name: Run ForgeScaffold Phase 4 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase4.py --project forgescaffold_phase4_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 5 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase5.py --project forgescaffold_phase5_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 6 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase6.py --project forgescaffold_phase6_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 7 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase7.py --project forgescaffold_phase7_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 8 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase8.py --project forgescaffold_phase8_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 9 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase9.py --project forgescaffold_phase9_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 10 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase10.py --project forgescaffold_phase10_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 11 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase11.py --project forgescaffold_phase11_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 12 verifier
+        run: |
+          python scripts/verify_forgescaffold_phase12.py --project forgescaffold_phase12_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: Run ForgeScaffold Phase 13C CLI verifier
+        run: |
+          python scripts/verify_forgescaffold_phase13c_cli.py --project forgescaffold_phase13c_ci --bootstrap --profile forgescaffold_apply_lowrisk
+      - name: CLI --json contract smoke check
+        run: |
+          python scripts/forgescaffold_cli.py status --project forgescaffold_ci --json > /tmp/status.json
+          python -c "import json; json.load(open('/tmp/status.json'))"

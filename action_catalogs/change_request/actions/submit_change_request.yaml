@@ -1,0 +1,51 @@
+# Source: CONCORD v0.3 Runtime Contract Schemas §3.4 — complete worked example.
+action_name: submit_change_request
+description: >
+  Transition a change request from draft to submitted, signalling readiness for review.
+  Requires all mandatory fields to be complete. Runs under eventual consistency with
+  an authoritative recheck before the state transition is committed.
+resource_type: change_request
+action_family: mutate
+input_schema_ref: "schemas/change_request/submit_input.json"
+output_schema_ref: "schemas/change_request/submit_output.json"
+required_capabilities:
+  - change_request_modify
+idempotency_required: true
+idempotency_scope: resource
+risk_level: moderate
+consistency_profile: EVENTUAL
+authoritative_recheck_required: true
+conflict_resolution_strategy: queue_first
+compensation_strategy: inverse_action
+compensation_order_hint: 20
+participates_in_saga: true
+required_trust_tier: "T2/bounded"
+retry_class: recheck_then_retry
+allowed_from_states:
+  - draft
+transitions_to_state: submitted
+guard_predicates:
+  - name: state_is_draft
+    guard_type: state
+    parameters: {expected_state: draft}
+    evaluation_order: 1
+  - name: required_fields_complete
+    guard_type: custom
+    parameters: {fields: [title, description, affected_systems]}
+    evaluation_order: 2
+  - name: edit_lease_held
+    guard_type: permission
+    parameters: {lease_type: edit, check: held_by_requesting_session}
+    evaluation_order: 3
+side_effects:
+  - effect_type: event_emit
+    reversible: false
+    description: Emits ChangeRequestSubmitted event to the review queue.
+    target_system: review_queue
+  - effect_type: version_increment
+    reversible: true
+    description: Resource version is incremented on submit.
+    target_resource: change_request
+budget_cost_units: 3.0
+budget_dimensions_consumed:
+  - mutate

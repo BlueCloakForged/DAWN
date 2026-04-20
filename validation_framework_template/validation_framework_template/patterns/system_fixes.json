@@ -1,0 +1,16 @@
+{
+    "patterns": [
+        {
+            "name": "Database Lock Recovery",
+            "message_contains": "database is locked",
+            "action_type": "command",
+            "action_payload": "echo 'Recovery: SQLite database locked. Waiting for retry...' && sleep 2"
+        },
+        {
+            "name": "Service Restart Example",
+            "message_contains": "connection refused",
+            "action_type": "command",
+            "action_payload": "echo 'Recovery: Service connection failed. Checking health...'"
+        }
+    ]
+}

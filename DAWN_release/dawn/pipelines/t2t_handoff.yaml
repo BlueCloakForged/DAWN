@@ -1,0 +1,16 @@
+pipelineId: t2t_handoff
+spec:
+  description: "End-to-end T2T ingestion and project packaging pipeline"
+links:
+  - id: ingest.t2t_handoff
+  - id: validate.project_handoff
+  - id: package.project_bundle
+overrides:
+  validate.project_handoff:
+    spec:
+      when:
+        condition: "on_success(ingest.t2t_handoff)"
+  package.project_bundle:
+    spec:
+      when:
+        condition: "on_success(validate.project_handoff)"

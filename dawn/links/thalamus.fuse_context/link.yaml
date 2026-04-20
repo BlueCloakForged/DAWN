@@ -1,0 +1,9 @@
+metadata:
+  name: thalamus.fuse_context
+spec:
+  requires:
+    - artifact: ligand.pool.snapshot.json
+    - artifact: thalamus.filter_status
+      from_link: thalamus.salience_filter
+  produces:
+    - artifact: thalamus.unified_event

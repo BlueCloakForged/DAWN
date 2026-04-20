@@ -1,0 +1,10 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: gate.patch_approval
+spec:
+  requires:
+    - artifactId: dawn.patchset
+  produces:
+    - artifactId: dawn.gate.patch_decision
+      path: patch_approval.json

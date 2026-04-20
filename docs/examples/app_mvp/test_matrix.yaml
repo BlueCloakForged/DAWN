@@ -1,0 +1,219 @@
+project_id: app_mvp
+levels:
+- L0_contract
+- L1_slice
+- L2_smoke
+- L3_nonfunctional
+units:
+- unit_id: datastore.data
+  type: datastore
+  path: data
+  success_criteria:
+  - Unit metadata present for datastore.data
+  - 'Linked flows: 0'
+  tests:
+  - id: datastore.data.L0_contract
+    level: L0_contract
+    command: python3 -c 'import os; print("datastore access", os.path.exists("data"))'
+    artifacts_expected: &id001
+    - forgescaffold.system_catalog.json
+  - id: datastore.data.L1_slice
+    level: L1_slice
+    command: echo "backup datastore schema for data"
+    artifacts_expected: &id002
+    - forgescaffold.dataflow_map.json
+  - id: datastore.data.L2_smoke
+    level: L2_smoke
+    command: echo "run sample read/write against data"
+    artifacts_expected: &id003
+    - forgescaffold.test_matrix.yaml
+  - id: datastore.data.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "verify SLA hooks for data"
+    artifacts_expected: &id004 []
+- unit_id: external.grpc
+  type: external_dependency
+  path: detected
+  success_criteria:
+  - Unit metadata present for external.grpc
+  - 'Linked flows: 0'
+  tests:
+  - id: external.grpc.L0_contract
+    level: L0_contract
+    command: python3 -c 'import grpc; print(getattr(grpc, "__version__", "unknown"))'
+    artifacts_expected: *id001
+  - id: external.grpc.L1_slice
+    level: L1_slice
+    command: echo "validate grpc compatibility"
+    artifacts_expected: *id002
+  - id: external.grpc.L2_smoke
+    level: L2_smoke
+    command: echo "link grpc into glue layer"
+    artifacts_expected: *id003
+  - id: external.grpc.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "audit security posture for grpc"
+    artifacts_expected: *id004
+- unit_id: external.httpx
+  type: external_dependency
+  path: detected
+  success_criteria:
+  - Unit metadata present for external.httpx
+  - 'Linked flows: 0'
+  tests:
+  - id: external.httpx.L0_contract
+    level: L0_contract
+    command: python3 -c 'import httpx; print(getattr(httpx, "__version__", "unknown"))'
+    artifacts_expected: *id001
+  - id: external.httpx.L1_slice
+    level: L1_slice
+    command: echo "validate httpx compatibility"
+    artifacts_expected: *id002
+  - id: external.httpx.L2_smoke
+    level: L2_smoke
+    command: echo "link httpx into glue layer"
+    artifacts_expected: *id003
+  - id: external.httpx.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "audit security posture for httpx"
+    artifacts_expected: *id004
+- unit_id: external.pinecone
+  type: external_dependency
+  path: detected
+  success_criteria:
+  - Unit metadata present for external.pinecone
+  - 'Linked flows: 0'
+  tests:
+  - id: external.pinecone.L0_contract
+    level: L0_contract
+    command: python3 -c 'import pinecone; print(getattr(pinecone, "__version__", "unknown"))'
+    artifacts_expected: *id001
+  - id: external.pinecone.L1_slice
+    level: L1_slice
+    command: echo "validate pinecone compatibility"
+    artifacts_expected: *id002
+  - id: external.pinecone.L2_smoke
+    level: L2_smoke
+    command: echo "link pinecone into glue layer"
+    artifacts_expected: *id003
+  - id: external.pinecone.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "audit security posture for pinecone"
+    artifacts_expected: *id004
+- unit_id: external.requests
+  type: external_dependency
+  path: detected
+  success_criteria:
+  - Unit metadata present for external.requests
+  - 'Linked flows: 0'
+  tests:
+  - id: external.requests.L0_contract
+    level: L0_contract
+    command: python3 -c 'import requests; print(getattr(requests, "__version__", "unknown"))'
+    artifacts_expected: *id001
+  - id: external.requests.L1_slice
+    level: L1_slice
+    command: echo "validate requests compatibility"
+    artifacts_expected: *id002
+  - id: external.requests.L2_smoke
+    level: L2_smoke
+    command: echo "link requests into glue layer"
+    artifacts_expected: *id003
+  - id: external.requests.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "audit security posture for requests"
+    artifacts_expected: *id004
+- unit_id: external.subprocess
+  type: external_dependency
+  path: detected
+  success_criteria:
+  - Unit metadata present for external.subprocess
+  - 'Linked flows: 0'
+  tests:
+  - id: external.subprocess.L0_contract
+    level: L0_contract
+    command: python3 -c 'import subprocess; print(getattr(subprocess, "__version__",
+      "unknown"))'
+    artifacts_expected: *id001
+  - id: external.subprocess.L1_slice
+    level: L1_slice
+    command: echo "validate subprocess compatibility"
+    artifacts_expected: *id002
+  - id: external.subprocess.L2_smoke
+    level: L2_smoke
+    command: echo "link subprocess into glue layer"
+    artifacts_expected: *id003
+  - id: external.subprocess.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "audit security posture for subprocess"
+    artifacts_expected: *id004
+- unit_id: external.vectorstore
+  type: external_dependency
+  path: detected
+  success_criteria:
+  - Unit metadata present for external.vectorstore
+  - 'Linked flows: 0'
+  tests:
+  - id: external.vectorstore.L0_contract
+    level: L0_contract
+    command: python3 -c 'import vectorstore; print(getattr(vectorstore, "__version__",
+      "unknown"))'
+    artifacts_expected: *id001
+  - id: external.vectorstore.L1_slice
+    level: L1_slice
+    command: echo "validate vectorstore compatibility"
+    artifacts_expected: *id002
+  - id: external.vectorstore.L2_smoke
+    level: L2_smoke
+    command: echo "link vectorstore into glue layer"
+    artifacts_expected: *id003
+  - id: external.vectorstore.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "audit security posture for vectorstore"
+    artifacts_expected: *id004
+- unit_id: src.tests
+  type: module
+  path: src/tests
+  success_criteria:
+  - Unit metadata present for src.tests
+  - 'Linked flows: 0'
+  tests:
+  - id: src.tests.L0_contract
+    level: L0_contract
+    command: python3 -m compileall src/tests/__init__.py
+    artifacts_expected: *id001
+  - id: src.tests.L1_slice
+    level: L1_slice
+    command: python3 -m pytest src/tests/__init__.py
+    artifacts_expected: *id002
+  - id: src.tests.L2_smoke
+    level: L2_smoke
+    command: python3 src/tests/__init__.py
+    artifacts_expected: *id003
+  - id: src.tests.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "Collect L3 metrics for src.tests"
+    artifacts_expected: *id004
+- unit_id: src.todo_cli
+  type: module
+  path: src/todo_cli
+  success_criteria:
+  - Unit metadata present for src.todo_cli
+  - 'Linked flows: 1'
+  tests:
+  - id: src.todo_cli.L0_contract
+    level: L0_contract
+    command: python3 -m compileall src/todo_cli/__init__.py
+    artifacts_expected: *id001
+  - id: src.todo_cli.L1_slice
+    level: L1_slice
+    command: python3 -m pytest src/todo_cli/__init__.py
+    artifacts_expected: *id002
+  - id: src.todo_cli.L2_smoke
+    level: L2_smoke
+    command: python3 src/todo_cli/__init__.py
+    artifacts_expected: *id003
+  - id: src.todo_cli.L3_nonfunctional
+    level: L3_nonfunctional
+    command: echo "Collect L3 metrics for src.todo_cli"
+    artifacts_expected: *id004

@@ -1,0 +1,2 @@
+pipelineId: test_strict
+links: [{id: test.missing_id}]

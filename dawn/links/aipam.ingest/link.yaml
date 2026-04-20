@@ -1,0 +1,24 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: aipam.ingest
+  description: >-
+    PCAP-specific ingestion link for AIPAM forensic projects.
+    Validates PCAP file headers (magic bytes), computes per-file
+    SHA256 digests, and publishes a deterministic project bundle.
+spec:
+  requires: [] # reads raw PCAPs from inputs/ by convention
+  produces:
+    - artifact: dawn.project.bundle
+      schema: json
+      path: dawn.project.bundle.json
+  config:
+    allowed_extensions:
+      - .pcap
+      - .pcapng
+      - .cap
+    max_file_size_mb: 500
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+    alwaysRun: true

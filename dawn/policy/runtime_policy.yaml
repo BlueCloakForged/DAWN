@@ -1,0 +1,166 @@
+budgets:
+  per_link:
+    max_cpu_sec: 120
+    max_mem_mb: 512
+    max_output_bytes: 10485760
+    max_wall_time_sec: 60
+  per_pipeline:
+    max_wall_time_sec: 1800
+  per_project:
+    max_project_bytes: 1073741824
+default_profile: normal
+error_codes:
+- CONTRACT_VIOLATION
+- MISSING_REQUIRED_ARTIFACT
+- PRODUCED_ARTIFACT_MISSING
+- AMBIGUOUS_ARTIFACT_ORIGIN
+- RUNTIME_ERROR
+- POLICY_VIOLATION
+- SCHEMA_INVALID
+- BUDGET_TIMEOUT
+- BUDGET_OUTPUT_LIMIT
+- BUDGET_PROJECT_LIMIT
+- BUDGET_PIPELINE_TIMEOUT
+forgescaffold:
+  index_integrity:
+    checkpoint_enabled: false
+    checkpoint_every_n_entries: null
+    checkpoint_min_interval_seconds: 0
+    checkpoint_on_success_only: true
+    checkpoint_write_root: evidence/checkpoints
+  global_catalog:
+    enabled: false
+    write_root: evidence/global
+    projects_allowlist: []
+    sign_catalog: false
+  lock_ttl_minutes: 30
+  min_signatures_by_risk:
+    high: 2
+    low: 1
+    medium: 1
+  cli:
+    default_mode: runnable_only
+    allow_force_lock: false
+    require_yes_for_force: true
+    status_default_limit: 10
+    redact_paths_in_human_output: true
+  tickets:
+    enabled: false
+    require_ticket_id: false
+    allowed_id_regex: "^FC-[0-9]+$"
+    allow_missing_in_bootstrap: true
+    auto_close_on_pass: false
+    close_requires:
+      signed_evidence: true
+      index_integrity_checkpoint: false
+      approvals_satisfied: true
+      risk_ack_satisfied: true
+  retention:
+    enabled: false
+    max_days: null
+    max_index_lines: null
+    max_packs: null
+    prune_mode: dry_run
+  risk_rules:
+    high_risk_ops:
+    - delete
+    - rename
+    high_risk_path_match:
+    - ^src/.*auth
+    - ^src/.*security
+    max_risk_without_auto_block: medium
+    require_risk_ack_for:
+    - high
+    require_two_person_for:
+    - high
+    sensitive_path_prefixes:
+    - dawn/
+    - .git/
+    - ci/
+    - infra/
+profiles:
+  forgescaffold_apply_lowrisk:
+    allow_auto_approval: false
+    allow_src_writes: true
+    allowed_subprocess_commands:
+    - python3
+    - pytest
+    - node
+    allowed_write_roots:
+    - artifacts
+    - ledger
+    - src
+    - tests
+    - observability
+    - evidence
+    - approvals
+    - tickets
+    - .locks
+    artifact_only_outputs: false
+    subprocess_whitelist: true
+    timeout_multiplier: 1.0
+  isolation:
+    allow_src_writes: false
+    allowed_input_extensions:
+    - .json
+    - .yaml
+    - .yml
+    - .md
+    - .txt
+    - .py
+    allowed_subprocess_commands:
+    - python3
+    - pytest
+    artifact_only_outputs: true
+    subprocess_whitelist: true
+    timeout_multiplier: 0.5
+  normal:
+    allow_src_writes: true
+    artifact_only_outputs: false
+    subprocess_whitelist: true
+    timeout_multiplier: 1.0
+retention:
+  always_keep_evidence_pack: true
+  keep_failed_runs_days: 7
+  keep_last_n_runs: 3
+  preserve_ledger: true
+  protected_artifacts:
+  - dawn.evidence.pack
+  - dawn.release.bundle
+  - dawn.metrics.run_summary
+retry:
+  backoff_schedule:
+  - 1
+  - 5
+  - 30
+  max_retries_per_link: 3
+  max_retries_per_project: 10
+  non_retryable_errors:
+  - CONTRACT_VIOLATION
+  - MISSING_REQUIRED_ARTIFACT
+  - PRODUCED_ARTIFACT_MISSING
+  - AMBIGUOUS_ARTIFACT_ORIGIN
+  - POLICY_VIOLATION
+  - SCHEMA_INVALID
+  - BUDGET_OUTPUT_LIMIT
+  - BUDGET_PROJECT_LIMIT
+  retryable_errors:
+  - BUDGET_TIMEOUT
+  - RUNTIME_ERROR
+security:
+  allow_src_writes:
+  - impl.scaffold_repo
+  - impl.apply_patchset
+  - test.smoke
+  - forgescaffold.apply_patchset
+  allowed_subprocess_commands:
+  - python3
+  - pytest
+  - git
+  allowed_write_roots:
+  - artifacts
+  - ledger
+  - src
+  - evidence
+  - tickets
+version: 2.1.0

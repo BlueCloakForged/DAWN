@@ -1,0 +1,6 @@
+metadata:
+  name: math.adder
+spec:
+  requires:
+    - artifact: thalamus.routing_decision
+      from_link: thalamus.switchboard

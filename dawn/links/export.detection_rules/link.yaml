@@ -1,0 +1,25 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: export.detection_rules
+  description: >-
+    Generates Suricata IDS and Sigma log-detection rules from
+    confirmed forensic findings. Uses LLM-assisted generation
+    when available, with deterministic template fallback.
+spec:
+  requires:
+    - artifact: aipam.findings.reviewed
+  produces:
+    - artifact: aipam.rules.suricata
+      schema: text
+      path: suricata_rules.rules
+    - artifact: aipam.rules.sigma
+      schema: yaml
+      path: sigma_rules.yaml
+  config:
+    model_name: "llama3.1:8b"
+    llm_endpoint: "http://localhost:11434"
+    use_llm: true
+  runtime:
+    timeoutSeconds: 300
+    retries: 0

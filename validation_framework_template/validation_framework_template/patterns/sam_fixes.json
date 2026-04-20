@@ -1,0 +1,47 @@
+{
+    "patterns": [
+        {
+            "name": "TTRL Config Import Fix",
+            "message_contains": "config_manager",
+            "component_equals": "TTRL",
+            "action_type": "command",
+            "action_payload": "echo 'Auto-Fix: Correcting TTRL config import path...'"
+        },
+        {
+            "name": "TPV Dependency Check",
+            "message_contains": "tpv",
+            "action_type": "script",
+            "action_payload": "scripts/diagnostic/validate_tpv_dependencies.py"
+        },
+        {
+            "name": "XP System Diagnosis",
+            "message_contains": "xp",
+            "action_type": "script",
+            "action_payload": "scripts/diagnostic/diagnose_xp_system.py"
+        },
+        {
+            "name": "Database Verification",
+            "message_contains": "database",
+            "action_type": "script",
+            "action_payload": "scripts/diagnostic/verify_rmc1_storage.py"
+        },
+        {
+            "name": "Memory Stats Check",
+            "message_contains": "memory",
+            "action_type": "script",
+            "action_payload": "scripts/diagnostic/check_memory_stats.py"
+        },
+        {
+            "name": "ColBERT Transformers Compatibility Fix",
+            "message_contains": "cannot import name 'AdamW' from 'transformers'",
+            "action_type": "command",
+            "action_payload": "pip install 'transformers>=4.34.0' && echo '✅ Auto-Fix: Modernized transformers; compatibility handled via internal monkeypatch (AdamW).'"
+        },
+        {
+            "name": "Feedback Pattern Comparison Fix",
+            "message_contains": "Feedback pattern analysis failed",
+            "action_type": "script",
+            "action_payload": "scripts/diagnostic/fix_feedback_comparison.py"
+        }
+    ]
+}

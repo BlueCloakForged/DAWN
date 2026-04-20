@@ -1,0 +1,32 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: report.narrative
+  description: >-
+    Forensic Narrative Builder (Chat Bridge). Synthesizes Level 1/2/3
+    findings into a conversational forensic story using the Generalist
+    Model. Produces aipam.forensic.narrative in Markdown format.
+spec:
+  requires:
+    - artifact: aipam.flow.ir
+      description: "Unified flow IR for context"
+    - artifact: aipam.findings.ir
+      description: "Level 2 forensic findings"
+    - artifact: aipam.malware.ir
+      description: "Level 3 malware classification (optional, HIGH sensitivity only)"
+      optional: true
+    - artifact: dawn.project.bundle
+      description: "Provenance bundle"
+  produces:
+    - artifact: aipam.forensic.narrative
+      schema: markdown
+      path: forensic_narrative.md
+      description: "Synthesized forensic story in Markdown"
+  config:
+    model_name: "llama3.1:8b"
+    llm_endpoint: "http://localhost:11434"
+    temperature: 0.3
+    max_tokens: 4096
+  runtime:
+    timeoutSeconds: 600
+    retries: 0

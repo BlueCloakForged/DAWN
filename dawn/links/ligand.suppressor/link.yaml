@@ -1,0 +1,8 @@
+metadata:
+  name: ligand.suppressor
+spec:
+  requires:
+    - artifact: ligand.pool.snapshot.json
+  produces:
+    - artifact: ligand.inhibition
+      optional: true

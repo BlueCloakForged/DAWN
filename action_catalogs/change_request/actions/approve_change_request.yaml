@@ -1,0 +1,42 @@
+action_name: approve_change_request
+description: >
+  Approve a change request under review, advancing it to the approved terminal state.
+  Requires a held review token and read-your-writes consistency so the reviewer sees
+  all prior mutations. Manual compensation only — approvals are not auto-reverted.
+resource_type: change_request
+action_family: approve
+input_schema_ref: "schemas/change_request/approve_input.json"
+output_schema_ref: "schemas/change_request/approve_output.json"
+required_capabilities:
+  - change_request_approve
+idempotency_required: true
+idempotency_scope: resource
+risk_level: high
+consistency_profile: READ_YOUR_WRITES
+session_watermark_required: true
+conflict_resolution_strategy: default
+compensation_strategy: manual_only
+participates_in_saga: true
+required_trust_tier: "T3/privileged"
+retry_class: recheck_then_retry
+allowed_from_states:
+  - under_review
+transitions_to_state: approved
+guard_predicates:
+  - name: state_is_under_review
+    guard_type: state
+    parameters: {expected_state: under_review}
+    evaluation_order: 1
+  - name: review_token_held
+    guard_type: permission
+    parameters: {token_type: validation_gate, check: held_by_requesting_session}
+    evaluation_order: 2
+side_effects:
+  - effect_type: event_emit
+    reversible: false
+    description: Emits ChangeRequestApproved event; downstream systems may begin deployment prep.
+    target_system: deployment_pipeline
+budget_cost_units: 5.0
+budget_dimensions_consumed:
+  - mutate
+  - high_risk

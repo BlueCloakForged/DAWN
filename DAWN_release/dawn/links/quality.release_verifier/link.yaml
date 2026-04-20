@@ -1,0 +1,23 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: quality.release_verifier
+  description: "Audits production artifacts and ledger against the Project Contract."
+spec:
+  requires:
+    - artifact: dawn.project.contract
+    - artifact: dawn.hitl.approval
+  produces:
+    - artifact: dawn.quality.release_audit
+      path: release_audit.json
+      schema: json
+    - artifact: dawn.trust.receipt
+      path: trust_receipt.md
+      schema: markdown
+
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: run
+      type: executor

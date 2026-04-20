@@ -1,0 +1,7 @@
+pipelineId: handoff_min
+description: Minimal project ingestion and validation.
+links:
+  - id: ingest.generic_handoff
+  - id: validate.project_handoff
+  - id: package.project_bundle
+  - id: gate.human_review

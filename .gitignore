@@ -1,0 +1,93 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+.venv_core/
+.venv_sign/
+venv/
+ENV/
+env/
+
+# AI tooling
+.claude/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Test artifacts (acceptance tests)
+projects/test_*/
+tests/*.log
+tests/acceptance_evidence/
+!tests/final_evidence_5of5.log
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# DAWN runtime data (team-specific)
+projects/
+queue/
+artifacts/
+evidence/
+Testing/
+
+# One-off temp/utility files
+test_write.txt
+copy_images_safe.py
+verify_*_sprint.py
+
+# Logs
+*.log
+!tests/final_evidence_5of5.log
+
+# Temporary files
+*.tmp
+*.temp
+*.backup
+*.bak
+
+# OS specific
+Thumbs.db
+.DS_Store
+._*
+
+# Node (if using forgechain_console)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Environment variables
+.env
+.env.local

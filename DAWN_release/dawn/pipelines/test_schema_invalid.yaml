@@ -1,0 +1,2 @@
+pipelineId: test_bad_schema
+links: [{id: test.bad_schema}]

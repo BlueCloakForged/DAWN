@@ -1,0 +1,11 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: plan.solution_outline
+spec:
+  requires:
+    - artifactId: dawn.project.descriptor
+    - artifactId: dawn.project.ir
+  produces:
+    - artifactId: dawn.plan.outline
+      path: plan.md

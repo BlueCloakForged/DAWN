@@ -1,0 +1,13 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: spec.requirements_map
+  version: 1.0.0
+  description: Parses SRS to extract canonical requirements tokens
+spec:
+  requires:
+    - artifactId: dawn.spec.srs
+  produces:
+    - artifactId: dawn.requirements_map
+      path: requirements_map.json
+      schema: json

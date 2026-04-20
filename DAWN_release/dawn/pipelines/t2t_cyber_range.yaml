@@ -1,0 +1,25 @@
+pipelineId: t2t_cyber_range
+description: "T2T parser pipeline (domain-specific use of domain-agnostic DAWN)"
+links:
+  - id: ingest.project_bundle
+
+  - id: ingest.handoff
+    config:
+      parser: t2t
+      layout_strategy: tiered
+      exports: [] # No exports by default
+
+  - id: hitl.gate
+    config:
+      mode: BLOCKED
+      auto_threshold: 0.7
+      require_no_flags: true
+
+  - id: validate.json_artifacts
+    config:
+      artifacts_to_validate:
+        - dawn.project.bundle
+        - dawn.project.ir
+        - dawn.hitl.approval
+      enforce_schema_version: true
+      allow_enveloped_payloads: true

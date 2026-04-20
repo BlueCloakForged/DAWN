@@ -1,0 +1,28 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: validate.project_handoff
+spec:
+  description: "Generic validation gate for project descriptor and IR"
+  requires:
+    - artifactId: dawn.project.descriptor
+    - artifactId: dawn.project.ir
+    - artifactId: dawn.project.export.primary
+      optional: true
+    - artifactId: dawn.project.export.workflow
+      optional: true
+  produces:
+    - artifactId: validate.project_handoff.report
+      path: handoff_validation_report.json
+      schema:
+        type: json
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: validate_inputs
+      type: validator
+    - id: run
+      type: executor
+    - id: validate_outputs
+      type: validator

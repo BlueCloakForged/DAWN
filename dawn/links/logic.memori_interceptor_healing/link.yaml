@@ -1,0 +1,12 @@
+metadata:
+  name: "logic.memori_interceptor_healing"
+  version: "1.0.0"
+spec:
+  runtime:
+    alwaysRun: true
+  requires:
+    - artifact: "dawn.evolution.transplant"
+      schema: "json"
+  produces:
+    - artifact: "memori_interceptor_healed.py"
+      schema: "python"

@@ -1,0 +1,24 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: aipam.extract
+  description: >-
+    Runs Zeek and Suricata on bundled PCAPs within the DAWN sandbox,
+    parses logs into the structured JSON IR that analyze.forensic_cot
+    expects, and publishes aipam.flow.ir.
+spec:
+  requires:
+    - artifact: dawn.project.bundle
+  produces:
+    - artifact: aipam.flow.ir
+      schema: json
+      path: flow_ir.json
+      description: "Structured flow + alert intermediate representation"
+  config:
+    zeek_binary: "zeek"
+    suricata_binary: "suricata"
+    suricata_config: "/etc/suricata/suricata.yaml"
+    max_flows: 10000
+  runtime:
+    timeoutSeconds: 600
+    retries: 0

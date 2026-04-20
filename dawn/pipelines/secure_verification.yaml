@@ -1,0 +1,15 @@
+pipelineId: secure_verification
+description: "Strict CI check with mandatory human review for security-sensitive code"
+links:
+  - id: ingest.generic_handoff
+  - id: validate.project_handoff
+
+  # Mandatory security gate
+  - id: hitl.gate
+    config:
+      mode: BLOCKED
+      reason: "Mandatory security review for environment variable access"
+
+  - id: ingest.project_bundle
+  - id: run.pytest
+  - id: package.project_bundle

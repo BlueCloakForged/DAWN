@@ -1,0 +1,28 @@
+action_name: read_change_request
+description: >
+  Read the current state of a change request. Returns business state, version,
+  and coordination metadata. Safe to call concurrently with no lease required.
+resource_type: change_request
+action_family: read
+input_schema_ref: "schemas/change_request/read_input.json"
+output_schema_ref: "schemas/change_request/read_output.json"
+required_capabilities: []
+idempotency_required: false
+risk_level: low
+consistency_profile: EVENTUAL
+conflict_resolution_strategy: default
+compensation_strategy: none
+participates_in_saga: false
+required_trust_tier: "T1/propose"
+idempotency_scope: session
+retry_class: safe_retry
+allowed_from_states:
+  - draft
+  - submitted
+  - under_review
+  - approved
+  - rejected
+guard_predicates: []
+side_effects: []
+budget_cost_units: 0.5
+budget_dimensions_consumed: []

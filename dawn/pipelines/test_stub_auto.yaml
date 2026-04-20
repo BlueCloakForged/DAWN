@@ -1,0 +1,16 @@
+pipelineId: test_stub_auto
+description: "AUTO mode pipeline for testing auto-approve logic"
+links:
+  - id: ingest.project_bundle
+
+  - id: ingest.handoff
+    config:
+      parser: stub
+      stub_confidence: 0.90 # High confidence for auto-approve
+      stub_flags: [] # No flags to satisfy require_no_flags
+
+  - id: hitl.gate
+    config:
+      mode: AUTO
+      auto_threshold: 0.7
+      require_no_flags: true

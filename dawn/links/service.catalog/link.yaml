@@ -1,0 +1,24 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: service.catalog
+spec:
+  description: "Turn idea into structured descriptor"
+  requires: []
+  produces:
+    - artifactId: "service.catalog.catalog"
+      path: "catalog.json"
+      schema:
+        type: "json"
+  runtime:
+    timeoutSeconds: 600
+    retries: 0
+  steps:
+    - id: validate_inputs
+      type: validator
+    - id: run
+      type: executor
+    - id: validate_outputs
+      type: validator
+    - id: emit_ledger
+      type: ledger

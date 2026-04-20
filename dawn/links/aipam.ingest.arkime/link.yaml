@@ -1,0 +1,36 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: aipam.ingest.arkime
+  description: >-
+    Source-agnostic Arkime ingest link. Queries the Arkime API using a
+    filter expression, downloads matching session PCAPs, runs Zeek/Suricata,
+    and produces the unified aipam.flow.ir schema.
+spec:
+  requires: []
+  produces:
+    - artifact: aipam.flow.ir
+      schema: json
+      path: flow_ir.json
+      description: "Unified flow + alert IR (source-agnostic)"
+    - artifact: dawn.project.bundle
+      schema: json
+      path: dawn.project.bundle.json
+      description: "Provenance bundle for ingested Arkime data"
+  config:
+    sensitivity: "LOW"
+    api_url: ""
+    api_username: ""
+    api_password: ""
+    filter: ""
+    time_range:
+      start: ""
+      end: ""
+    zeek_binary: "zeek"
+    suricata_binary: "suricata"
+    suricata_config: "/etc/suricata/suricata.yaml"
+    max_flows: 10000
+  runtime:
+    timeoutSeconds: 600
+    retries: 1
+    alwaysRun: true

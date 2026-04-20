@@ -1,0 +1,20 @@
+pipelineId: autofix
+description: "Auto-fix pipeline with self-healing for pytest failures"
+profile: normal # Allows healing link to modify source files
+links:
+  - id: ingest.generic_handoff
+
+  - id: validate.project_handoff
+
+  - id: ingest.project_bundle
+
+  # Run pytest without failing the pipeline
+  # This uses run.pytest_nonfatal which returns SUCCEEDED even when tests fail
+  - id: run.pytest_nonfatal
+
+  # Run healing to fix any test failures
+  # The healing link will check the pytest_report and attempt fixes
+  - id: validation.self_heal
+
+  # Package the result
+  - id: package.project_bundle

@@ -1,0 +1,32 @@
+pipelineId: weaved_pipeline
+spec:
+  description: 'Generated pipeline for links: gate.human_review, ingest.t2t_handoff,
+    validate.project_handoff, package.project_bundle, scaffold.project, spec.requirements'
+links:
+- id: gate.human_review
+- id: ingest.t2t_handoff
+- id: validate.project_handoff
+- id: package.project_bundle
+- id: scaffold.project
+- id: spec.requirements
+overrides:
+  ingest.t2t_handoff:
+    spec:
+      when:
+        condition: on_success(gate.human_review)
+  validate.project_handoff:
+    spec:
+      when:
+        condition: on_success(ingest.t2t_handoff)
+  package.project_bundle:
+    spec:
+      when:
+        condition: on_success(validate.project_handoff)
+  scaffold.project:
+    spec:
+      when:
+        condition: on_success(package.project_bundle)
+  spec.requirements:
+    spec:
+      when:
+        condition: on_success(scaffold.project)

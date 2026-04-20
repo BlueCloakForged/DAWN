@@ -1,0 +1,53 @@
+{
+  "created_at": "1970-01-01T00:00:00Z",
+  "ext": {},
+  "generator": {
+    "name": "forgescaffold.obs_instrument_patchset",
+    "version": "1.0.0"
+  },
+  "intent": {
+    "category": "observability_instrumentation",
+    "constraints": [
+      "instrumentation_only",
+      "no_core_logic_changes",
+      "no_network_calls"
+    ],
+    "scope": "generate_only"
+  },
+  "operations": [
+    {
+      "content": "import json\nimport time\n\n\ndef log_event(**kwargs):\n    payload = {\n        \"schema_version\": \"1.0.0\",\n        \"timestamp\": time.strftime(\"%Y-%m-%dT%H:%M:%SZ\", time.gmtime()),\n        \"severity\": kwargs.get(\"severity\", \"INFO\"),\n        \"run_id\": kwargs.get(\"run_id\", \"unknown\"),\n        \"unit_id\": kwargs.get(\"unit_id\", \"unknown\"),\n        \"operation\": kwargs.get(\"operation\", \"operation\"),\n        \"result\": kwargs.get(\"result\", \"ok\"),\n        \"duration_ms\": kwargs.get(\"duration_ms\"),\n        \"message\": kwargs.get(\"message\"),\n    }\n    print(json.dumps(payload, sort_keys=True))\n",
+      "content_sha256": "832cbcdbab724cd3cb787ee54b3c5a9f7d59e892d23e3980e0f7944581a3370d",
+      "op": "add",
+      "path": "src/forgescaffold_logging.py",
+      "reason": "Add minimal JSON logger wrapper for instrumentation",
+      "safety": {
+        "apply_guard": "profile=dev",
+        "reversible": true,
+        "risk": "low"
+      },
+      "tags": [
+        "observability",
+        "logger"
+      ]
+    }
+  ],
+  "patchset_id": "db5536dcbf88e2edc0c6c9ce97c6b79af3ba4ca95cad09065f288c4ffd01d0c5",
+  "requires": {
+    "artifacts": [
+      "forgescaffold.system_catalog.json",
+      "forgescaffold.dataflow_map.json",
+      "forgescaffold.log_envelope.schema.json"
+    ]
+  },
+  "schema_version": "1.0.0",
+  "target": {
+    "bundle_content_sha256": "30cc2c2d90160e5beb32bdf95836b3dcb553f37b7db9b1fdb0a6143cca47ddef",
+    "language_hints": [
+      "config",
+      "python"
+    ],
+    "project_id": "app_mvp",
+    "root_dir": "."
+  }
+}

@@ -1,0 +1,12 @@
+pipelineId: test_stub_skip
+description: "SKIP mode pipeline for testing bypass logic"
+links:
+  - id: ingest.project_bundle
+
+  - id: ingest.handoff
+    config:
+      parser: stub
+
+  - id: hitl.gate
+    config:
+      mode: SKIP

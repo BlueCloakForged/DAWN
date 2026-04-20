@@ -1,0 +1,10 @@
+metadata:
+  name: "handoff.receptor"
+  version: "1.0.0"
+spec:
+  runtime:
+    alwaysRun: true
+  requires: []
+  produces:
+    - artifact: "dawn.evolution.transplant"
+      schema: "json"

@@ -1,0 +1,65 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ENGRAM Memory Registry",
+    "description": "Schema for ENGRAM memory vectors - the searchable past",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "memory_id": {
+                "type": "string",
+                "description": "Unique identifier for this memory"
+            },
+            "bundle_sha256": {
+                "type": "string",
+                "description": "Reference to DAWN Ledger bundle for verifiability"
+            },
+            "vector": {
+                "type": "array",
+                "items": {
+                    "type": "number"
+                },
+                "description": "Embedding vector for similarity search"
+            },
+            "coherence_score": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 1.0,
+                "description": "Final coherence score from the transaction"
+            },
+            "signal_category": {
+                "type": "string",
+                "description": "Category of signal (e.g., user_command, background_noise)"
+            },
+            "link_category": {
+                "type": "string",
+                "description": "Category of DAWN link that produced this outcome"
+            },
+            "timestamp": {
+                "type": "number",
+                "description": "Unix timestamp of consolidation"
+            },
+            "decay_factor": {
+                "type": "number",
+                "default": 1.0,
+                "description": "Memory strength (decays over time unless reinforced)"
+            },
+            "reinforcement_count": {
+                "type": "integer",
+                "default": 0,
+                "description": "Number of times this memory has been reinforced"
+            },
+            "metadata": {
+                "type": "object",
+                "description": "Additional context (application-agnostic)"
+            }
+        },
+        "required": [
+            "memory_id",
+            "bundle_sha256",
+            "vector",
+            "coherence_score",
+            "timestamp"
+        ]
+    }
+}

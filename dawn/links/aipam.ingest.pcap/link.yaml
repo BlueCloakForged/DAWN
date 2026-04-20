@@ -1,0 +1,35 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: aipam.ingest.pcap
+  description: >-
+    Source-agnostic PCAP ingest link. Validates PCAP files from inputs/,
+    runs Zeek/Suricata for feature extraction, and produces the unified
+    aipam.flow.ir intermediate representation consumed by all downstream
+    analysis links. Reads sensitivity from the project contract.
+spec:
+  requires: []
+  produces:
+    - artifact: aipam.flow.ir
+      schema: json
+      path: flow_ir.json
+      description: "Unified flow + alert IR (source-agnostic)"
+    - artifact: dawn.project.bundle
+      schema: json
+      path: dawn.project.bundle.json
+      description: "PCAP provenance bundle"
+  config:
+    sensitivity: "LOW"
+    allowed_extensions:
+      - .pcap
+      - .pcapng
+      - .cap
+    max_file_size_mb: 500
+    zeek_binary: "zeek"
+    suricata_binary: "suricata"
+    suricata_config: "/etc/suricata/suricata.yaml"
+    max_flows: 10000
+  runtime:
+    timeoutSeconds: 600
+    retries: 0
+    alwaysRun: true

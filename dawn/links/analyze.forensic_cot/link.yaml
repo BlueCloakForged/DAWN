@@ -1,0 +1,33 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: analyze.forensic_cot
+  description: >-
+    Bridge AIPAM's ForensicEngine (Chain-of-Thought) into the DAWN runtime.
+    Performs two-stage LLM forensic analysis on parsed network flows and
+    produces structured findings with MITRE ATT&CK mappings.
+    Guardrail violations (hallucinated flow IDs) are logged to the ledger.
+spec:
+  requires:
+    - artifact: aipam.flow.ir
+      description: "Parsed flow intermediate representation (JSON)"
+    - artifact: dawn.project.bundle
+      description: "Project bundle for provenance binding"
+  produces:
+    - artifact: aipam.findings.ir
+      schema: json
+      path: findings_ir.json
+      description: "Validated forensic findings with MITRE mappings"
+    - artifact: aipam.analysis.metrics
+      schema: json
+      path: analysis_metrics.json
+      description: "Analysis performance and guardrail metrics"
+  config:
+    model_name: "llama3.1:8b"
+    temperature: 0.1
+    top_n: 3
+    auto_threshold: 0.7
+    llm_endpoint: "http://localhost:11434"
+  runtime:
+    timeoutSeconds: 600
+    retries: 0

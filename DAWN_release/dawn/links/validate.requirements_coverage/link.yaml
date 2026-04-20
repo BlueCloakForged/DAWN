@@ -1,0 +1,26 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: validate.requirements_coverage
+  version: 1.0.0
+  description: Validates that requirements in SRS are covered by patchset; fails or gates on gaps.
+spec:
+  requires:
+    - artifactId: dawn.spec.srs
+      schema: markdown
+    - artifactId: dawn.requirements_map
+      schema: json
+    - artifactId: dawn.capabilities_manifest
+      schema: json
+      optional: true
+    - artifactId: dawn.patchset
+      schema: json
+  produces:
+    - artifactId: dawn.requirements_coverage_report
+      path: requirements_coverage_report.json
+      schema: json
+
+config:
+  policy: FAIL
+  strict: true
+  gate_kind: requirements_coverage

@@ -1,0 +1,5 @@
+metadata:
+  name: test.task
+spec:
+  always_run: true
+  produces: []

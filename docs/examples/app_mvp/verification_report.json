@@ -1,0 +1,124 @@
+{
+  "mode": "runnable_only",
+  "results": [
+    {
+      "command": "python3 -c 'import os; print(\"datastore access\", os.path.exists(\"data\"))'",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "echo \"backup datastore schema for data\"",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python3 -c 'import grpc; print(getattr(grpc, \"__version__\", \"unknown\"))'",
+      "exit_code": null,
+      "missing_deps": [
+        "grpc"
+      ],
+      "reason": "missing python module: grpc",
+      "status": "SKIPPED_DEP_MISSING"
+    },
+    {
+      "command": "echo \"validate grpc compatibility\"",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python3 -c 'import httpx; print(getattr(httpx, \"__version__\", \"unknown\"))'",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "echo \"validate httpx compatibility\"",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python3 -c 'import pinecone; print(getattr(pinecone, \"__version__\", \"unknown\"))'",
+      "exit_code": null,
+      "missing_deps": [
+        "pinecone"
+      ],
+      "reason": "missing python module: pinecone",
+      "status": "SKIPPED_DEP_MISSING"
+    },
+    {
+      "command": "echo \"validate pinecone compatibility\"",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python3 -c 'import requests; print(getattr(requests, \"__version__\", \"unknown\"))'",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "echo \"validate requests compatibility\"",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python3 -c 'import subprocess; print(getattr(subprocess, \"__version__\", \"unknown\"))'",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "echo \"validate subprocess compatibility\"",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python3 -c 'import vectorstore; print(getattr(vectorstore, \"__version__\", \"unknown\"))'",
+      "exit_code": null,
+      "missing_deps": [
+        "vectorstore"
+      ],
+      "reason": "missing python module: vectorstore",
+      "status": "SKIPPED_DEP_MISSING"
+    },
+    {
+      "command": "echo \"validate vectorstore compatibility\"",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python3 -m pytest artifacts/forgescaffold.test_matrix/test_harness/tests/test_l0_smoke.py",
+      "exit_code": null,
+      "missing_deps": [
+        "pytest"
+      ],
+      "reason": "missing python module: pytest",
+      "status": "SKIPPED_DEP_MISSING"
+    },
+    {
+      "command": "python3 -m pytest src/forgescaffold_logging.py",
+      "exit_code": null,
+      "missing_deps": [
+        "pytest"
+      ],
+      "reason": "missing python module: pytest",
+      "status": "SKIPPED_DEP_MISSING"
+    },
+    {
+      "command": "python3 -m pytest src/tests/__init__.py",
+      "exit_code": null,
+      "missing_deps": [
+        "pytest"
+      ],
+      "reason": "missing python module: pytest",
+      "status": "SKIPPED_DEP_MISSING"
+    },
+    {
+      "command": "python3 -m pytest src/todo_cli/__init__.py",
+      "exit_code": null,
+      "missing_deps": [
+        "pytest"
+      ],
+      "reason": "missing python module: pytest",
+      "status": "SKIPPED_DEP_MISSING"
+    }
+  ],
+  "status": "WARN"
+}

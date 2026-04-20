@@ -1,0 +1,62 @@
+# product.yaml
+product:
+  name: ForgeChain
+  codename: DAWN
+  tagline: "Deterministic pipelines of links for auditable software delivery."
+  description: >
+    ForgeChain is a controlled execution environment where a project is advanced
+    through a chain of deterministic links. Each link declares explicit requires/produces
+    contracts, writes only to its sandbox, and emits evidence into a ledger. Pipelines
+    are linted before execution and produce audit-ready reports and bundles.
+
+versioning:
+  schema_version: 1
+  product_version: "0.10.3" # bump as you ship phases
+  contract_version: "2.x" # whatever your link.yaml contract spec is at now
+  policy_version: "2.1.0" # runtime_policy.yaml version
+
+paths:
+  workspace_root: "."
+  projects_root: "./projects"
+  links_root: "./dawn/links"
+  pipelines_root: "./dawn/pipelines"
+  policy_root: "./dawn/policy"
+
+defaults:
+  profile: "normal" # normal|isolation
+  strict_artifact_id: true # DAWN_STRICT_ARTIFACT_ID=1 equivalent
+  use_queue: true
+  report_enabled: true
+
+capabilities:
+  deterministic_execution: true
+  contract_enforcement: true
+  schema_validation: true
+  budgets: true
+  retry_policy: true
+  isolation_profiles: true
+  change_control_patchsets: true
+  evidence_packs: true
+  release_verification: true
+  audit_dashboard: true
+  agent_json_api: true
+  multi_project_queue: true
+
+interfaces:
+  cli:
+    entrypoints:
+      - "python3 -m dawn.runtime.main"
+      - "python3 -m dawn.runtime.queue"
+      - "python3 -m dawn.runtime.agent"
+      - "python3 -m dawn.runtime.pipelines"
+  agent_api:
+    mode: "json"
+    schema: "agent_protocol.json"
+  reports:
+    html: "projects/<id>/artifacts/package.project_report/project_report.html"
+
+guardrails:
+  sandboxed_writes: true
+  src_writes_gated: true
+  artifact_only_outputs_in_isolation: true
+  lockfiles: true

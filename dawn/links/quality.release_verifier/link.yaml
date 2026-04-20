@@ -1,0 +1,40 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: quality.release_verifier
+  description: "Audits production artifacts and ledger against the Project Contract."
+spec:
+  requires:
+    - artifact: dawn.project.contract
+      optional: true
+    - artifact: dawn.hitl.approval
+      optional: true
+    # AIPAM provenance: verify findings match the original bundle
+    - artifact: aipam.findings.ir
+      optional: true
+    - artifact: aipam.findings.reviewed
+      optional: true
+    - artifact: dawn.project.bundle
+      optional: true
+    - artifact: aipam.campaign.correlation
+      optional: true
+    - artifact: aipam.analysis.metrics
+      optional: true
+    - artifact: aipam.rules.suricata
+      optional: true
+    - artifact: aipam.rules.sigma
+      optional: true
+  produces:
+    - artifact: dawn.quality.release_audit
+      path: release_audit.json
+      schema: json
+    - artifact: dawn.trust.receipt
+      path: trust_receipt.md
+      schema: markdown
+
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+  steps:
+    - id: run
+      type: executor

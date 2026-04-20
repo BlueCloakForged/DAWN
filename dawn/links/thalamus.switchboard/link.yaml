@@ -1,0 +1,8 @@
+metadata:
+  name: thalamus.switchboard
+spec:
+  requires:
+    - artifact: thalamus.unified_event
+      from_link: thalamus.fuse_context
+  produces:
+    - artifact: thalamus.routing_decision

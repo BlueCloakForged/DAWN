@@ -1,0 +1,7 @@
+metadata:
+  name: thalamus.salience_filter
+spec:
+  requires:
+    - artifact: ligand.pool.snapshot.json
+  produces:
+    - artifact: thalamus.filter_status

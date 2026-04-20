@@ -1,0 +1,20 @@
+links:
+  - id: service.catalog
+  - id: quality.gates
+  - id: chain.validator
+  - id: validation.self_heal
+overrides:
+  validation.self_heal:
+    spec:
+      when:
+        condition: "on_failure(quality.gates)"
+  quality.gates:
+    spec:
+      produces:
+        - artifactId: "quality.gates.duplicate"
+          path: "catalog.json" # Collision!
+  chain.validator:
+    spec:
+      requires:
+        - artifact: "catalog.json"
+          from_link: "service.catalog" # Resolution!

@@ -1,0 +1,53 @@
+# Local project data (will be volume-mounted)
+projects/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache/
+tests/
+Testing/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+._*
+
+# Documentation (optional - remove if you want docs in image)
+docs/
+*.md
+!README.md
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# Other development files
+.claude/
+artifacts/
+queue/

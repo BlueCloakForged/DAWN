@@ -1,0 +1,138 @@
+{
+  "project_id": "app_mvp",
+  "units": [
+    {
+      "entrypoint": null,
+      "exports": [],
+      "id": "datastore.data",
+      "language": "config",
+      "observability": {
+        "metrics": "enabled"
+      },
+      "owner_tag": "app_mvp",
+      "path": "data",
+      "risk_tags": [
+        "persistent"
+      ],
+      "type": "datastore"
+    },
+    {
+      "entrypoint": "grpc",
+      "exports": [],
+      "id": "external.grpc",
+      "language": "python",
+      "observability": {
+        "trust": "unknown"
+      },
+      "owner_tag": "app_mvp",
+      "path": "detected",
+      "risk_tags": [
+        "third_party"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "entrypoint": "httpx",
+      "exports": [],
+      "id": "external.httpx",
+      "language": "python",
+      "observability": {
+        "trust": "unknown"
+      },
+      "owner_tag": "app_mvp",
+      "path": "detected",
+      "risk_tags": [
+        "third_party"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "entrypoint": "pinecone",
+      "exports": [],
+      "id": "external.pinecone",
+      "language": "python",
+      "observability": {
+        "trust": "unknown"
+      },
+      "owner_tag": "app_mvp",
+      "path": "detected",
+      "risk_tags": [
+        "third_party"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "entrypoint": "requests",
+      "exports": [],
+      "id": "external.requests",
+      "language": "python",
+      "observability": {
+        "trust": "unknown"
+      },
+      "owner_tag": "app_mvp",
+      "path": "detected",
+      "risk_tags": [
+        "third_party"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "entrypoint": "subprocess",
+      "exports": [],
+      "id": "external.subprocess",
+      "language": "python",
+      "observability": {
+        "trust": "unknown"
+      },
+      "owner_tag": "app_mvp",
+      "path": "detected",
+      "risk_tags": [
+        "third_party"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "entrypoint": "vectorstore",
+      "exports": [],
+      "id": "external.vectorstore",
+      "language": "python",
+      "observability": {
+        "trust": "unknown"
+      },
+      "owner_tag": "app_mvp",
+      "path": "detected",
+      "risk_tags": [
+        "third_party"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "entrypoint": "src/tests/__init__.py",
+      "exports": [],
+      "id": "src.tests",
+      "language": "python",
+      "observability": {
+        "logs": "src.tests.log",
+        "tracing": "auto"
+      },
+      "owner_tag": "app_mvp",
+      "path": "src/tests",
+      "risk_tags": [],
+      "type": "module"
+    },
+    {
+      "entrypoint": "src/todo_cli/__init__.py",
+      "exports": [],
+      "id": "src.todo_cli",
+      "language": "python",
+      "observability": {
+        "logs": "src.todo_cli.log",
+        "tracing": "auto"
+      },
+      "owner_tag": "app_mvp",
+      "path": "src/todo_cli",
+      "risk_tags": [],
+      "type": "module"
+    }
+  ]
+}

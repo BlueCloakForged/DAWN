@@ -1,0 +1,14 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: ingest.project_bundle
+  description: "Registers projects/<id>/inputs as a deterministic bundle manifest"
+spec:
+  requires: [] # reads inputs/ by convention
+  produces:
+    - artifact: dawn.project.bundle
+      schema: json
+  runtime:
+    timeoutSeconds: 300
+    retries: 0
+    alwaysRun: true # Ground truth step - always recompute

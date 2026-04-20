@@ -1,0 +1,26 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: memory.vector_index
+  description: >-
+    Forensic Memory — Vectorizes confirmed findings into a global
+    ChromaDB instance for cross-job recall. Provides the "experience"
+    backbone for the Lead Forensic Investigator chatbot.
+spec:
+  requires:
+    - artifact: aipam.findings.reviewed
+      description: "Post-HITL confirmed findings only"
+  produces:
+    - artifact: aipam.memory.receipt
+      schema: json
+      path: memory_receipt.json
+      description: "Receipt of what was vectorized"
+  config:
+    model_name: "llama3.1:8b"
+    llm_endpoint: "http://localhost:11434"
+    chromadb_path: "~/.aipam/forensic_memory"
+    collection_name: "aipam_forensic_findings"
+    batch_size: 50
+  runtime:
+    timeoutSeconds: 300
+    retries: 0

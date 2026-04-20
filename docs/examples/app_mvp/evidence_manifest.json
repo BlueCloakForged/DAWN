@@ -1,0 +1,33 @@
+{
+  "entries": [
+    {
+      "artifact_id": "forgescaffold.instrumentation.patchset.json",
+      "path": "evidence_pack/instrumentation.patchset.json"
+    },
+    {
+      "artifact_id": "forgescaffold.apply_report.json",
+      "path": "evidence_pack/apply_report.json"
+    },
+    {
+      "artifact_id": "forgescaffold.rollback_patchset.json",
+      "path": "evidence_pack/rollback_patchset.json"
+    },
+    {
+      "artifact_id": "forgescaffold.workspace_snapshot.json",
+      "path": "evidence_pack/workspace_snapshot.json"
+    },
+    {
+      "artifact_id": "forgescaffold.verification_report.json",
+      "path": "evidence_pack/verification_report.json"
+    },
+    {
+      "artifact_id": "forgescaffold.test_results.manifest.json",
+      "path": "evidence_pack/manifest.json"
+    },
+    {
+      "artifact_id": "ledger.events",
+      "path": "evidence_pack/ledger_events.jsonl"
+    }
+  ],
+  "root": "evidence_pack"
+}

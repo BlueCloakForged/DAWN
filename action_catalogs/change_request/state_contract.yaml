@@ -1,0 +1,140 @@
+resource_type: change_request
+initial_state: draft
+terminal_states:
+  - approved
+  - rejected
+conflict_resolution_strategy: default
+
+states:
+  - name: draft
+    description: Initial authoring state. Author holds edit lease and may revise freely.
+    is_terminal: false
+    allowed_action_refs:
+      - read_change_request
+      - update_change_request
+      - request_edit_lease
+      - submit_change_request
+
+  - name: submitted
+    description: Change request has been submitted and is awaiting reviewer assignment.
+    is_terminal: false
+    allowed_action_refs:
+      - read_change_request
+      - request_review_token
+      - withdraw_change_request
+
+  - name: under_review
+    description: A reviewer holds the review token and is actively evaluating the change.
+    is_terminal: false
+    allowed_action_refs:
+      - read_change_request
+      - approve_change_request
+      - reject_change_request
+
+  - name: approved
+    description: Change request has been approved. Deployment is permitted.
+    is_terminal: true
+    allowed_action_refs:
+      - read_change_request
+      - deploy_change_request
+
+  - name: rejected
+    description: Change request was rejected. Reopening creates an explicit new authoring path.
+    is_terminal: true
+    allowed_action_refs:
+      - read_change_request
+      - reopen_change_request
+
+transitions:
+  - name: draft_to_submitted
+    from_state: draft
+    to_state: submitted
+    action_ref: submit_change_request
+    guards:
+      - name: required_fields_complete
+        guard_type: custom
+        parameters: {fields: [title, description, affected_systems]}
+        evaluation_order: 1
+      - name: edit_lease_not_required
+        guard_type: state
+        parameters: {}
+        evaluation_order: 2
+    on_success: []
+
+  - name: submitted_to_under_review
+    from_state: submitted
+    to_state: under_review
+    action_ref: request_review_token
+    guards:
+      - name: review_token_available
+        guard_type: permission
+        parameters: {token_type: validation_gate}
+        evaluation_order: 1
+    on_success: []
+
+  - name: submitted_to_draft
+    from_state: submitted
+    to_state: draft
+    action_ref: withdraw_change_request
+    guards:
+      - name: requester_is_author
+        guard_type: permission
+        parameters: {check: session_owns_resource}
+        evaluation_order: 1
+    on_success: []
+
+  - name: under_review_to_approved
+    from_state: under_review
+    to_state: approved
+    action_ref: approve_change_request
+    guards:
+      - name: review_token_held
+        guard_type: permission
+        parameters: {token_type: validation_gate}
+        evaluation_order: 1
+      - name: state_is_under_review
+        guard_type: state
+        parameters: {expected_state: under_review}
+        evaluation_order: 2
+    on_success: []
+
+  - name: under_review_to_rejected
+    from_state: under_review
+    to_state: rejected
+    action_ref: reject_change_request
+    guards:
+      - name: review_token_held
+        guard_type: permission
+        parameters: {token_type: validation_gate}
+        evaluation_order: 1
+    on_success: []
+
+  - name: approved_to_deployed
+    from_state: approved
+    to_state: approved
+    action_ref: deploy_change_request
+    guards:
+      - name: human_gate_satisfied
+        guard_type: custom
+        parameters: {gate: human_approval_confirmed}
+        evaluation_order: 1
+      - name: projection_within_tolerance
+        guard_type: custom
+        parameters: {max_lag_ms: 5000}
+        evaluation_order: 2
+    on_success: []
+
+  - name: rejected_to_draft
+    from_state: rejected
+    to_state: draft
+    action_ref: reopen_change_request
+    guards:
+      - name: requester_is_author_or_admin
+        guard_type: permission
+        parameters: {check: session_owns_resource_or_admin}
+        evaluation_order: 1
+    on_success: []
+
+rollback_rules: []
+entry_hooks: []
+exit_hooks: []

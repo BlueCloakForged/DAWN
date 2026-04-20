@@ -1,0 +1,21 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: ingest.handoff
+  description: "Transforms human docs (bundle) into domain-agnostic IR; parser is pluggable"
+spec:
+  requires:
+    - artifact: dawn.project.bundle
+      check: exists
+  produces:
+    - artifact: dawn.project.ir
+      schema: json
+    - artifact: dawn.export.cro
+      schema: json
+      optional: true
+    - artifact: dawn.export.n8n
+      schema: json
+      optional: true
+  runtime:
+    timeoutSeconds: 300
+    retries: 0

@@ -1,0 +1,32 @@
+{
+  "trusted_signers": [
+    {
+      "fingerprint": "7fd19db74ae25eed9b5bf3c8b391fc01008477efa548b182570ac1b80feb206f",
+      "label": "sig1",
+      "scopes": {
+        "projects": [
+          "forgescaffold_phase10_ci"
+        ],
+        "pipelines": [
+          "forgescaffold_apply_v8_integrity_runnable"
+        ]
+      },
+      "expires_at": "2030-01-01T00:00:00Z",
+      "revoked": false
+    },
+    {
+      "fingerprint": "12d9fe3c458f0c84ecf4eadf46dd09bf96a4e470ed7fa78a3597e0062d5589f9",
+      "label": "sig2",
+      "scopes": {
+        "projects": [
+          "forgescaffold_phase10_ci"
+        ],
+        "pipelines": [
+          "forgescaffold_apply_v8_integrity_runnable"
+        ]
+      },
+      "expires_at": "2030-01-01T00:00:00Z",
+      "revoked": false
+    }
+  ]
+}

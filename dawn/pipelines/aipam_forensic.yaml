@@ -1,0 +1,117 @@
+pipelineId: aipam_forensic
+description: >-
+  Sensitivity-Based Model Pyramid for AIPAM forensic analysis.
+  Source-agnostic ingest (PCAP / Security Onion / Arkime) →
+  Chain-of-Thought analysis → conditional deep malware ID (HIGH only) →
+  narrative synthesis → analyst review → campaign correlation →
+  detection rule export → final audit.
+profile: normal
+# ─────────────────────────────────────────────────────────────────────────
+# Sensitivity Contract:
+#   LOW  → L1 + L2 + Narrative  (skip Level 3)
+#   HIGH → L1 + L2 + L3 (Mc4minta) + Narrative
+# ─────────────────────────────────────────────────────────────────────────
+
+links:
+  # ── Level 0: Source-Agnostic Ingest ─────────────────────────────────
+  # Choose ONE per run.  Override at project level to select source.
+  - id: aipam.ingest.pcap
+    config:
+      sensitivity: "LOW"
+
+  # ── Level 1+2: Forensic Chain-of-Thought (always runs) ─────────────
+  - id: analyze.forensic_cot
+    config:
+      model_name: "llama3.1:8b"
+      temperature: 0.1
+      top_n: 3
+      auto_threshold: 0.7
+      llm_endpoint: "http://localhost:11434"
+
+  # ── Level 3: Deep Malware ID (HIGH sensitivity only) ───────────────
+  - id: analyze.deep_malware
+    config:
+      model_name: "mc4minta:latest"
+      llm_endpoint: "http://localhost:11434"
+      confidence_threshold: 0.6
+      max_samples: 100
+
+  # ── Narrative Builder: Forensic Story synthesis ─────────────────────
+  - id: report.narrative
+    config:
+      model_name: "llama3.1:8b"
+      llm_endpoint: "http://localhost:11434"
+      temperature: 0.3
+
+  # ── HITL Gate: Analyst reviews findings ─────────────────────────────
+  - id: hitl.findings_review
+    config:
+      mode: AUTO
+      auto_confirm_threshold: 0.9
+
+  # ── Forensic Memory: Vectorize confirmed findings ──────────────────
+  - id: memory.vector_index
+    config:
+      model_name: "llama3.1:8b"
+      llm_endpoint: "http://localhost:11434"
+      chromadb_path: "~/.aipam/forensic_memory"
+      collection_name: "aipam_forensic_findings"
+
+  # ── Correlation: Cross-project campaign detection ───────────────────
+  - id: correlate.campaign
+    config:
+      min_shared_projects: 2
+
+  # ── Purple Team: Adversary emulation script generation ──────────────
+  - id: simulate.traffic_pattern
+    config:
+      model_name: "llama3.1:8b"
+      llm_endpoint: "http://localhost:11434"
+      safe_mode: true
+      max_findings: 10
+
+  # ── Export: Generate Suricata/Sigma detection rules ─────────────────
+  - id: export.detection_rules
+    config:
+      use_llm: false
+
+  # ── Final Audit: Trust receipt and release verification ─────────────
+  - id: quality.release_verifier
+
+# ─────────────────────────────────────────────────────────────────────────
+# Overrides — Sensitivity-based routing
+# ─────────────────────────────────────────────────────────────────────────
+overrides:
+  analyze.forensic_cot:
+    spec:
+      when:
+        condition: on_success(aipam.ingest.pcap)
+  analyze.deep_malware:
+    spec:
+      when:
+        # Level 3 runs ONLY when sensitivity is HIGH
+        condition: "on_success(analyze.forensic_cot) AND sensitivity == 'HIGH'"
+  report.narrative:
+    spec:
+      when:
+        condition: on_success(analyze.forensic_cot)
+  hitl.findings_review:
+    spec:
+      when:
+        condition: on_success(report.narrative)
+  memory.vector_index:
+    spec:
+      when:
+        condition: on_success(hitl.findings_review)
+  correlate.campaign:
+    spec:
+      when:
+        condition: on_success(memory.vector_index)
+  export.detection_rules:
+    spec:
+      when:
+        condition: on_success(correlate.campaign)
+  quality.release_verifier:
+    spec:
+      when:
+        condition: on_success(export.detection_rules)
