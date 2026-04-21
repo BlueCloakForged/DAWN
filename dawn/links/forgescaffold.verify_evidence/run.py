@@ -1,3 +1,4 @@
+"""Verify evidence signature, trust, and receipt linkage"""
 import base64
 import hashlib
 import json
@@ -75,6 +76,7 @@ def _load_policy(project_root: Path) -> Dict[str, Any]:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     artifact_store = project_context.get("artifact_store")
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])

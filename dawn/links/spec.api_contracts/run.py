@@ -1,9 +1,11 @@
+"""Executes the spec.api_contracts step in the DAWN pipeline."""
 import json
 
 def run(context, config):
     # In a real scenario, this would analyze the plan.md
     # For this MVP, we generate a deterministic TODO API.
     
+    """Run."""
     api_spec = {
         "version": "1.0.0",
         "endpoints": [

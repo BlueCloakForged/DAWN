@@ -1,9 +1,11 @@
+"""Deterministic gate that requires a human_decision.json file to proceed."""
 import os
 import json
 import shutil
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_root = context["project_root"]
     project_id = context["project_id"]
     link_id = "gate.human_review"

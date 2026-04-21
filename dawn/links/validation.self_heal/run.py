@@ -1,3 +1,4 @@
+"""Autonomous self-healing orchestrator for pytest failures"""
 from typing import Dict, Any, List, Optional
 import json
 import os

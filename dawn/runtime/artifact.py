@@ -1,9 +1,11 @@
+"""CLI tool for resolving and inspecting project artifacts by artifact ID."""
 import argparse
 import os
 import json
 from pathlib import Path
 
 def resolve_artifact(project_id: str, artifact_id: str, print_content: bool, projects_dir: str):
+    """Resolve artifact."""
     project_root = Path(projects_dir) / project_id
     index_path = project_root / "artifact_index.json"
     
@@ -51,6 +53,7 @@ def resolve_artifact(project_id: str, artifact_id: str, print_content: bool, pro
         print("--- CONTENT END ---")
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(description="DAWN Artifact Helper")
     subparsers = parser.add_subparsers(dest="command")
 

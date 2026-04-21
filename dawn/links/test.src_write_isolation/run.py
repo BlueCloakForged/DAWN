@@ -11,6 +11,7 @@ from pathlib import Path
 
 
 def run(context, config):
+    """Run."""
     project_root = Path(context["project_root"])
     src_dir = project_root / "src"
     src_dir.mkdir(parents=True, exist_ok=True)

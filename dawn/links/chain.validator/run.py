@@ -1,6 +1,8 @@
+"""Reads ledger, asserts invariants"""
 from typing import Dict, Any
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     project_id = project_context["project_id"]
     ledger = project_context["ledger"]
     

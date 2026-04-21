@@ -1,7 +1,9 @@
+"""Executes the plan.solution_outline step in the DAWN pipeline."""
 import json
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     artifacts = context["artifact_index"]
     desc_path = Path(artifacts["dawn.project.descriptor"]["path"])
     ir_path = Path(artifacts["dawn.project.ir"]["path"])

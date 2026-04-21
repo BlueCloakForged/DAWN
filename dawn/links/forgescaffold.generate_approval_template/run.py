@@ -1,3 +1,4 @@
+"""Generate approval template for patchset approval"""
 import json
 import uuid
 from datetime import datetime, timezone
@@ -46,6 +47,7 @@ def _required_signatures(overall_risk: str, policy: Dict[str, Any]) -> int:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     artifact_store = project_context.get("artifact_store")
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])

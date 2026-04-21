@@ -1,3 +1,4 @@
+"""Apply a ForgeScaffold patchset with drift/scope gates and rollback"""
 import fnmatch
 import hashlib
 import json
@@ -457,6 +458,7 @@ def _build_rollback(op: Dict[str, Any], pre_bytes: Optional[bytes]) -> Dict[str,
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     artifact_store = project_context.get("artifact_store")
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])

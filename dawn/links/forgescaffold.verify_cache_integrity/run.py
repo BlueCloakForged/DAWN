@@ -1,3 +1,4 @@
+"""Verify evidence index cache integrity against raw JSONL"""
 import base64
 import json
 import sqlite3
@@ -149,6 +150,7 @@ def _verify_summary_signature(
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])
     if not sandbox:

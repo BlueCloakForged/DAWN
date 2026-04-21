@@ -1,7 +1,9 @@
+"""Executes the test.unauthorized_src_write step in the DAWN pipeline."""
 from pathlib import Path
 
 def run(context, config):
     # Try to write to src/ without being authorized
+    """Run."""
     project_root = Path(context["project_root"])
     src_dir = project_root / "src"
     src_dir.mkdir(parents=True, exist_ok=True)

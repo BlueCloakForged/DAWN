@@ -1,3 +1,4 @@
+"""Write a signed summary for evidence index cache provenance"""
 import base64
 import json
 import os
@@ -118,6 +119,7 @@ def _read_cache_meta(cache_path: Path) -> Optional[Dict[str, Any]]:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])
     if not sandbox:

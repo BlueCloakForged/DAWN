@@ -1,3 +1,4 @@
+"""Sign evidence manifest and approval receipt"""
 import base64
 import hashlib
 import json
@@ -86,6 +87,7 @@ def _load_private_keys(project_root: Path) -> List[Tuple[bytes, Any]]:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     artifact_store = project_context.get("artifact_store")
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])

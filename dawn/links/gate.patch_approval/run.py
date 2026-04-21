@@ -1,9 +1,11 @@
+"""Executes the gate.patch_approval step in the DAWN pipeline."""
 import json
 import hashlib
 import os
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_id = context["project_id"]
     project_root = Path(context["project_root"])
     

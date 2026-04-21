@@ -1,8 +1,10 @@
+"""Generic validation gate for project descriptor and IR"""
 import os
 import json
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_id = context["project_id"]
     artifacts = context["artifact_index"]
     out_dir = os.path.join(context["project_root"], "artifacts", "validate.project_handoff")

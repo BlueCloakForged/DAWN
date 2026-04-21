@@ -1,3 +1,4 @@
+"""Global operator status across projects"""
 import json
 from datetime import datetime
 from pathlib import Path
@@ -65,6 +66,7 @@ def _render_md(status: Dict[str, Any]) -> str:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     if not sandbox:
         raise RuntimeError("Sandbox missing")

@@ -1,3 +1,4 @@
+"""Synthesize a test matrix spanning L0-L3 for the discovered units"""
 import json
 import shlex
 from collections import defaultdict
@@ -8,6 +9,7 @@ import yaml
 
 
 def register_schema(schema_name: str, schema_path: Path) -> None:
+    """Register schema."""
     try:
         from dawn.runtime import schemas as runtime_schemas
     except ImportError:
@@ -26,6 +28,7 @@ def register_schema(schema_name: str, schema_path: Path) -> None:
 
 
 def load_artifact(artifact_store, artifact_id: str) -> Dict[str, Any]:
+    """Load artifact."""
     meta = artifact_store.get(artifact_id)
     if not meta:
         raise RuntimeError(f"Missing artifact {artifact_id}")
@@ -34,10 +37,12 @@ def load_artifact(artifact_store, artifact_id: str) -> Dict[str, Any]:
 
 
 def escape_literal(value: str) -> str:
+    """Escape literal."""
     return value.replace("\\", "\\\\").replace('"', '\\"')
 
 
 def build_command(unit: Dict[str, Any], level: str) -> str:
+    """Build command."""
     path = unit.get("entrypoint") or unit.get("path") or "."
     quoted = shlex.quote(path)
     base_name = unit.get("id", "unknown").split(".")[-1]
@@ -88,6 +93,7 @@ def build_command(unit: Dict[str, Any], level: str) -> str:
 
 
 def write_harness(sandbox, language: str) -> Dict[str, Any]:
+    """Write harness."""
     harness_root = Path("test_harness")
     files = []
 
@@ -140,6 +146,7 @@ def write_harness(sandbox, language: str) -> Dict[str, Any]:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     project_root = Path(project_context["project_root"])
     sandbox = project_context.get("sandbox")
     artifact_store = project_context.get("artifact_store")

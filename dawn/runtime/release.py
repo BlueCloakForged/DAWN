@@ -1,9 +1,11 @@
+"""CLI entry point for triggering the DAWN release pipeline for a completed project."""
 import argparse
 import sys
 from pathlib import Path
 from dawn.runtime.orchestrator import Orchestrator
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(description="DAWN Project Release CLI")
     parser.add_argument("--project", "-p", required=True, help="Project ID")
     parser.add_argument("--projects-dir", default="projects", help="Base projects directory")

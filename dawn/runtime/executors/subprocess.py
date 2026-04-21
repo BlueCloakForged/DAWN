@@ -8,6 +8,7 @@ from .base import Executor, RunResult
 
 class SubprocessExecutor(Executor):
     def __init__(self, projects_dir: str = "projects", **kwargs):
+        """ init ."""
         self.projects_dir = Path(projects_dir)
 
     def run_pipeline(
@@ -21,6 +22,7 @@ class SubprocessExecutor(Executor):
         metadata: Optional[Dict[str, Any]] = None
     ) -> RunResult:
         # Resolve pipeline path if only ID provided
+        """Run pipeline."""
         if not pipeline_path and pipeline_id:
             pipeline_path = f"dawn/pipelines/{pipeline_id}.yaml"
         
@@ -122,7 +124,9 @@ class SubprocessExecutor(Executor):
             )
 
     def get_status(self, project_id: str) -> dict:
+        """Get status."""
         return {"status": "unknown"}
 
     def cancel(self, project_id: str) -> bool:
+        """Cancel."""
         return False # Stub

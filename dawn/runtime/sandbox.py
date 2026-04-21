@@ -1,3 +1,4 @@
+"""Isolated per-link file sandbox providing scoped read/write access to project artifacts."""
 import os
 import json
 import shutil
@@ -6,6 +7,7 @@ from typing import Any, Optional
 
 class Sandbox:
     def __init__(self, project_root: str, link_id: str, is_shadow: bool = False):
+        """ init ."""
         self.project_root = Path(project_root)
         self.link_id = link_id
         self.is_shadow = is_shadow

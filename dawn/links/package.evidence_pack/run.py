@@ -1,9 +1,11 @@
+"""Executes the package.evidence_pack step in the DAWN pipeline."""
 import os
 import zipfile
 import shutil
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_root = Path(context["project_root"])
     
     # Files to include

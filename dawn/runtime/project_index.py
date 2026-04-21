@@ -1,3 +1,4 @@
+"""Maintains project_index.json: canonical run metadata, file digests, and artifact manifests."""
 import os
 import json
 import time

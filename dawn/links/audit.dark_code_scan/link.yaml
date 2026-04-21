@@ -1,0 +1,29 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: audit.dark_code_scan
+spec:
+  description: >
+    Scans the DAWN codebase for 'dark code' — modules that lack documentation,
+    docstrings, inline context, or manifest files. Produces a risk-ranked report
+    identifying comprehension gaps per the Dark Code Management Framework
+    (Layer 2: Self-Describing Systems).
+  requires: []
+  produces:
+    - artifactId: "audit.dark_code_scan.report"
+      path: "dark_code_report.json"
+      schema:
+        type: "json"
+        ref: "audit.dark_code_scan"
+  runtime:
+    timeoutSeconds: 120
+    retries: 0
+  failure_modes:
+    - condition: "DAWN source tree not found at expected path"
+      behavior: "FAILED with diagnostic message"
+      caller_action: "Verify project workspace has access to dawn/ source"
+  steps:
+    - id: run
+      type: executor
+    - id: emit_ledger
+      type: ledger

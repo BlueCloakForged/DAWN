@@ -1,7 +1,9 @@
+"""Executes the impl.apply_patchset step in the DAWN pipeline."""
 import json
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_root = Path(context["project_root"])
     src_dir = project_root / "src"
     

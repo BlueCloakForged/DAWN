@@ -1,3 +1,4 @@
+"""Computes a cryptographic diff between the original bundle and current state."""
 import json
 import hashlib
 import fnmatch

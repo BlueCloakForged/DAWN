@@ -10,6 +10,7 @@ import time
 
 def run(context, config):
     # Sleep for 10 seconds - should trigger timeout if limit is < 10s
+    """Run."""
     sleep_duration = 10
 
     print(f"test.sleep_long: Sleeping for {sleep_duration} seconds...", flush=True)

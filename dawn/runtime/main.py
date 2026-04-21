@@ -1,9 +1,11 @@
+"""CLI entry point for `python -m dawn.runtime.main` — runs a DAWN pipeline against a project."""
 import argparse
 import sys
 from pathlib import Path
 from dawn.runtime.orchestrator import Orchestrator
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(description="DAWN Orchestrator: Execute SDLC pipelines.")
     parser.add_argument("--project", "-p", required=True, help="Project ID")
     parser.add_argument("--pipeline", "-l", required=True, help="Path to pipeline YAML")

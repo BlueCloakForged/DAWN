@@ -36,6 +36,7 @@ class LockfileGenerator:
     LOCKFILE_VERSION = "1.0.0"
 
     def __init__(self, projects_dir: str = "projects", links_dir: str = "dawn/links"):
+        """ init ."""
         self.projects_dir = Path(projects_dir)
         self.links_dir = Path(links_dir)
         self.policy_loader = get_policy_loader()
@@ -200,6 +201,7 @@ class LockfileVerifier:
     """Verifies that current environment matches a lockfile."""
 
     def __init__(self, projects_dir: str = "projects", links_dir: str = "dawn/links"):
+        """ init ."""
         self.projects_dir = Path(projects_dir)
         self.links_dir = Path(links_dir)
         self.policy_loader = get_policy_loader()
@@ -308,6 +310,7 @@ class LockfileVerifier:
 
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(
         description="DAWN Reproducibility Lockfile Tool (Phase 9.3)",
         formatter_class=argparse.RawDescriptionHelpFormatter,

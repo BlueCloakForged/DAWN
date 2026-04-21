@@ -31,6 +31,7 @@ class ReleaseVerifier:
     """Verifies integrity of DAWN release bundles."""
 
     def __init__(self):
+        """ init ."""
         self.errors: List[Dict] = []
         self.warnings: List[Dict] = []
         self.verified_files: List[Dict] = []
@@ -301,6 +302,7 @@ class ReleaseVerifier:
 
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(
         description="DAWN Release Verification Tool (Phase 9.4)",
         formatter_class=argparse.RawDescriptionHelpFormatter,

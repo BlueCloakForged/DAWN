@@ -1,3 +1,4 @@
+"""CLI inspector for DAWN projects — renders ledger history, artifact state, and policy status."""
 import argparse
 import os
 import json
@@ -6,6 +7,7 @@ from .ledger import Ledger
 from ..policy import get_policy_loader, PolicyValidationError
 
 def inspect_project(project_id: str, projects_dir: str = None):
+    """Inspect project."""
     if projects_dir is None:
         # Default to repo/projects
         base_dir = Path(__file__).parent.parent.parent

@@ -1,3 +1,4 @@
+"""Test harness for validating DAWN link behavior: positive paths, failure modes, and manual gates."""
 import os
 import shutil
 import uuid
@@ -28,6 +29,7 @@ NEGATIVE = {
 MANUAL = ["ingest.t2t_handoff", "chain.validator", "quality.gates", "validate.project_handoff", "test.collision"]
 
 def test_links():
+    """Test links."""
     base_dir = Path(__file__).parent.parent.parent
     links_dir = base_dir / "dawn" / "links"
     projects_root = base_dir / "projects"
@@ -74,6 +76,7 @@ def test_links():
 
             # Mock Artifacts for SDLC links
             def mock_art(art_id, link_name, file_name, content={}):
+                """Mock art."""
                 p = project_path / "artifacts" / link_name
                 p.mkdir(parents=True, exist_ok=True)
                 fp = p / file_name

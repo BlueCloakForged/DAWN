@@ -1,3 +1,4 @@
+"""Executes the ligand.synapse_threshold step in the DAWN pipeline."""
 import json
 from pathlib import Path
 

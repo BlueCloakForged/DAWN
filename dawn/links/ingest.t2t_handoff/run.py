@@ -1,3 +1,4 @@
+"""Handoff to T2T for document ingestion and IR generation"""
 import os
 import json
 from datetime import datetime
@@ -5,6 +6,7 @@ from pathlib import Path
 from dawn.integrations.t2t_adapter import run_t2t
 
 def run(context, config):
+    """Run."""
     project_id = context["project_id"]
     project_root = context["project_root"]
     

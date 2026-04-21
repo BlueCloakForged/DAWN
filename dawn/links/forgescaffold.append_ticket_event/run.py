@@ -1,3 +1,4 @@
+"""Append a ticket ledger event"""
 import json
 from pathlib import Path
 from typing import Any, Dict
@@ -11,6 +12,7 @@ from ticket_utils import append_ticket_event, normalize_ticket_id, validate_tick
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])
     if not sandbox:

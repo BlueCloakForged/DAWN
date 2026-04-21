@@ -1,3 +1,4 @@
+"""Run harness tests and core checks after patchset apply"""
 import importlib
 import json
 import re
@@ -108,6 +109,7 @@ def _preflight_check(command: str, project_root: Path) -> Tuple[Optional[str], L
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     artifact_store = project_context.get("artifact_store")
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])

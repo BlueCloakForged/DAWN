@@ -20,6 +20,7 @@ QUEUE_LOCK = "queue/queue.lock"
 
 class QueueManager:
     def __init__(self, queue_file: str = QUEUE_FILE):
+        """ init ."""
         self.queue_file = Path(queue_file)
         self.queue_file.parent.mkdir(parents=True, exist_ok=True)
         self.lock_file = Path(QUEUE_LOCK)
@@ -292,6 +293,7 @@ class QueueManager:
             projects_executed += 1
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(description="DAWN Multi-Project Queue (Phase 8.4.3)")
     subparsers = parser.add_subparsers(dest="command")
 

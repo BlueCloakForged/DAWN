@@ -1,3 +1,4 @@
+"""Placeholder CI runner"""
 from typing import Dict, Any
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:

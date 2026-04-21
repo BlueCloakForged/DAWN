@@ -5,6 +5,7 @@ import json
 import os
 
 def main():
+    """Main."""
     print("Starting sleep test...")
     for i in range(10):
         print(f"Step {i+1}/10: Working...")

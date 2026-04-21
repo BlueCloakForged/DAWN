@@ -1,7 +1,9 @@
+"""Executes the test.dummy step in the DAWN pipeline."""
 import time
 import json
 
 def run(context, config):
+    """Run."""
     link_config = config.get("config", {})
     mode = link_config.get("mode", "success")
     sleep_sec = link_config.get("sleep_sec", 0)

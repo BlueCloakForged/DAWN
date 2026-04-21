@@ -1,8 +1,10 @@
+"""Executes the package.src_diff step in the DAWN pipeline."""
 import os
 import hashlib
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_root = Path(context["project_root"])
     src_dir = project_root / "src"
     

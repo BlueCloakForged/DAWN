@@ -1,3 +1,4 @@
+"""CLI and status-reporting helpers for inspecting DAWN project state and agent run history."""
 import argparse
 import json
 import os
@@ -8,6 +9,7 @@ from dawn.runtime.orchestrator import Orchestrator
 from dawn.runtime.ledger import Ledger
 
 def get_project_status(project_id, projects_dir, links_dir):
+    """Get project status."""
     project_root = Path(projects_dir) / project_id
     if not project_root.exists():
         return {"error": f"Project {project_id} not found"}
@@ -84,6 +86,7 @@ def get_project_status(project_id, projects_dir, links_dir):
     }
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(description="DAWN Agent Interface (JSON)")
     parser.add_argument("--project", "-p", required=True, help="Project ID")
     parser.add_argument("--action", "-a", required=True, choices=["runbook", "run", "inspect", "artifact_open", "release"])

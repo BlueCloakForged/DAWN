@@ -28,6 +28,7 @@ class PruningReport:
     """Tracks what was pruned and what was preserved."""
 
     def __init__(self, project_id: str):
+        """ init ."""
         self.project_id = project_id
         self.preserved: List[Dict] = []
         self.deleted: List[Dict] = []
@@ -35,6 +36,7 @@ class PruningReport:
         self.space_freed_bytes: int = 0
 
     def add_preserved(self, artifact_id: str, reason: str, path: str):
+        """Add preserved."""
         self.preserved.append({
             "artifact_id": artifact_id,
             "reason": reason,
@@ -42,6 +44,7 @@ class PruningReport:
         })
 
     def add_deleted(self, artifact_id: str, reason: str, path: str, size_bytes: int):
+        """Add deleted."""
         self.deleted.append({
             "artifact_id": artifact_id,
             "reason": reason,
@@ -51,6 +54,7 @@ class PruningReport:
         self.space_freed_bytes += size_bytes
 
     def add_error(self, artifact_id: str, error: str, path: str):
+        """Add error."""
         self.errors.append({
             "artifact_id": artifact_id,
             "error": error,
@@ -58,6 +62,7 @@ class PruningReport:
         })
 
     def to_dict(self) -> Dict:
+        """To dict."""
         return {
             "project_id": self.project_id,
             "timestamp": datetime.now().isoformat(),
@@ -76,6 +81,7 @@ class ArtifactPruner:
     """Prunes artifacts based on retention policy."""
 
     def __init__(self, projects_dir: str = "projects"):
+        """ init ."""
         self.projects_dir = Path(projects_dir)
         self.policy_loader = get_policy_loader()
 
@@ -279,6 +285,7 @@ class ArtifactPruner:
 
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(
         description="DAWN Artifact Pruning Tool (Phase 9.2)",
         formatter_class=argparse.RawDescriptionHelpFormatter,

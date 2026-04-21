@@ -1,8 +1,10 @@
+"""Executes the impl.scaffold_repo step in the DAWN pipeline."""
 import os
 import json
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_root = Path(context["project_root"])
     src_dir = project_root / "src"
     src_dir.mkdir(parents=True, exist_ok=True)
@@ -26,6 +28,7 @@ def run(context, config):
     manifest = []
     
     def create_structure(base, struct, current_manifest):
+        """Create structure."""
         for name, content in struct.items():
             path = base / name
             if isinstance(content, dict):

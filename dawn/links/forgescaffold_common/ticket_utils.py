@@ -16,6 +16,7 @@ def _now_iso() -> str:
 
 
 def normalize_ticket_id(raw: Optional[str], allowed_regex: Optional[str] = None) -> str:
+    """Normalize ticket id."""
     if raw is None:
         raise ValueError("ticket_id missing")
     value = str(raw).strip()
@@ -34,6 +35,7 @@ def normalize_ticket_id(raw: Optional[str], allowed_regex: Optional[str] = None)
 
 
 def validate_ticket_ref(ticket_ref: Dict[str, Any], allowed_regex: Optional[str] = None) -> Tuple[bool, List[str]]:
+    """Validate ticket ref."""
     errors: List[str] = []
     if not isinstance(ticket_ref, dict):
         return False, ["ticket_ref must be object"]
@@ -51,12 +53,14 @@ def validate_ticket_ref(ticket_ref: Dict[str, Any], allowed_regex: Optional[str]
 
 
 def compute_event_hash(event: Dict[str, Any]) -> str:
+    """Compute event hash."""
     payload = dict(event)
     payload.pop("event_hash", None)
     return sha256_text(canonical_json(payload))
 
 
 def last_event_hash(events_path: Path) -> Optional[str]:
+    """Last event hash."""
     if not events_path.exists():
         return None
     lines = events_path.read_text().splitlines()
@@ -79,6 +83,7 @@ def append_ticket_event(
     event_id: Optional[str] = None,
     timestamp: Optional[str] = None,
 ) -> Dict[str, Any]:
+    """Append ticket event."""
     prev_hash = last_event_hash(events_path) or "GENESIS"
     event = {
         "event_id": event_id or uuid.uuid4().hex,
@@ -98,6 +103,7 @@ def append_ticket_event(
 
 
 def verify_event_chain(events_path: Path) -> Tuple[bool, Optional[int], Optional[str]]:
+    """Verify event chain."""
     if not events_path.exists():
         return True, None, None
     prev_hash = "GENESIS"

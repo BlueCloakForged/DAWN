@@ -1,3 +1,4 @@
+"""Generate a deterministic system catalog for the project workspace"""
 import json
 import os
 from pathlib import Path
@@ -18,6 +19,7 @@ except ModuleNotFoundError:
 
 
 def register_schema(schema_name: str, schema_path: Path) -> None:
+    """Register schema."""
     try:
         from dawn.runtime import schemas as runtime_schemas
     except ImportError:
@@ -36,6 +38,7 @@ def register_schema(schema_name: str, schema_path: Path) -> None:
 
 
 def readable_relpath(project_root: Path, target: Path) -> str:
+    """Readable relpath."""
     try:
         return str(target.relative_to(project_root))
     except ValueError:
@@ -43,12 +46,14 @@ def readable_relpath(project_root: Path, target: Path) -> str:
 
 
 def collect_python_units(project_root: Path, project_id: str) -> Dict[str, Dict[str, Any]]:
+    """Collect python units."""
     modules: Dict[str, Dict[str, Any]] = {}
     src_root = project_root / "src"
     if not src_root.exists():
         return modules
 
     def add_unit(unit_id: str, path: Path, entrypoint: Optional[Path]) -> None:
+        """Add unit."""
         modules[unit_id] = {
             "id": unit_id,
             "type": "module",
@@ -86,6 +91,7 @@ def collect_python_units(project_root: Path, project_id: str) -> Dict[str, Dict[
 
 
 def collect_service_units(project_root: Path, project_id: str) -> Dict[str, Dict[str, Any]]:
+    """Collect service units."""
     services: Dict[str, Dict[str, Any]] = {}
     compose_candidates = []
     for pattern in ["docker-compose.yml", "docker-compose.yaml", "compose.yaml", "compose.yml"]:
@@ -160,6 +166,7 @@ def collect_service_units(project_root: Path, project_id: str) -> Dict[str, Dict
 
 
 def collect_agent_units(project_root: Path, project_id: str) -> Dict[str, Dict[str, Any]]:
+    """Collect agent units."""
     agents: Dict[str, Dict[str, Any]] = {}
     candidates = ["agents", "agent_steps", "workflows", "pipeline", "flows", "skills", "tools"]
     for folder in candidates:
@@ -188,6 +195,7 @@ def collect_agent_units(project_root: Path, project_id: str) -> Dict[str, Dict[s
 
 
 def collect_datastores(project_root: Path, project_id: str) -> Dict[str, Dict[str, Any]]:
+    """Collect datastores."""
     storages: Dict[str, Dict[str, Any]] = {}
     base_dirs = ["data", "storage", "databases", "db", "state", "cache"]
     for base_name in base_dirs:
@@ -228,9 +236,11 @@ def collect_datastores(project_root: Path, project_id: str) -> Dict[str, Dict[st
 
 
 def collect_external_deps(project_root: Path, project_id: str) -> Dict[str, Dict[str, Any]]:
+    """Collect external deps."""
     externals: Dict[str, Dict[str, Any]] = {}
 
     def add_dep(dep_name: str, source: str, language: str) -> None:
+        """Add dep."""
         artifact_id = f"external.{dep_name}"
         if artifact_id in externals:
             return
@@ -286,6 +296,7 @@ def collect_external_deps(project_root: Path, project_id: str) -> Dict[str, Dict
 
 
 def assemble_units(project_root: Path, project_id: str) -> List[Dict[str, Any]]:
+    """Assemble units."""
     units: Dict[str, Dict[str, Any]] = {}
     for collector in (
         collect_python_units,
@@ -300,6 +311,7 @@ def assemble_units(project_root: Path, project_id: str) -> List[Dict[str, Any]]:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     project_id = project_context["project_id"]
     sandbox = project_context.get("sandbox")
     artifact_store = project_context.get("artifact_store")

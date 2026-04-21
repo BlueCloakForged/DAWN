@@ -1,3 +1,4 @@
+"""Read-only project analyzer that reconstructs run state from the ledger for runbook generation."""
 import argparse
 import os
 import json
@@ -6,6 +7,7 @@ from typing import Dict, List
 from dawn.runtime.orchestrator import Orchestrator
 
 def analyze_project(project_id: str, projects_dir: str, links_dir: str):
+    """Analyze project."""
     project_root = Path(projects_dir) / project_id
     if not project_root.exists():
         print(f"ERROR: Project '{project_id}' does not exist at {project_root}")
@@ -119,6 +121,7 @@ def analyze_project(project_id: str, projects_dir: str, links_dir: str):
             print("NEXT STEP: Project complete. Review artifacts or evidence pack.")
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(description="DAWN Runbook: Predictable Next Steps")
     parser.add_argument("--project", "-p", required=True, help="Project ID")
     parser.add_argument("--projects-dir", default="projects", help="Base projects directory")

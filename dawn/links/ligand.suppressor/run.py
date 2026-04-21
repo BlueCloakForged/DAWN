@@ -1,3 +1,4 @@
+"""Executes the ligand.suppressor step in the DAWN pipeline."""
 import json
 from pathlib import Path
 

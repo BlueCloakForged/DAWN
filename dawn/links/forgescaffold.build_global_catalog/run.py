@@ -1,3 +1,4 @@
+"""Build a deterministic global catalog of per-project evidence"""
 import base64
 import json
 import os
@@ -140,6 +141,7 @@ def _sha256_bytes(data: bytes) -> str:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])
     repo_root = Path(__file__).resolve().parents[3]

@@ -1,3 +1,4 @@
+"""Interface for querying LIGAND modulation pool state, decoupled from any specific agent."""
 import os
 import json
 from pathlib import Path
@@ -9,6 +10,7 @@ class LigandQueryInterface:
     Decouples the framework from agents like SAM.
     """
     def __init__(self, pool_path: str = None):
+        """ init ."""
         if pool_path is None:
             # Default to artifacts/ligand.pool.json relative to DAWN root
             dawn_root = os.environ.get("DAWN_ROOT", str(Path(__file__).resolve().parent.parent.parent))

@@ -1,3 +1,4 @@
+"""Materialize a dataflow graph from the system catalog"""
 import ast
 import json
 from pathlib import Path
@@ -5,6 +6,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 def register_schema(schema_name: str, schema_path: Path) -> None:
+    """Register schema."""
     try:
         from dawn.runtime import schemas as runtime_schemas
     except ImportError:
@@ -23,6 +25,7 @@ def register_schema(schema_name: str, schema_path: Path) -> None:
 
 
 def load_catalog(artifact_store) -> Dict[str, Any]:
+    """Load catalog."""
     artifact_meta = artifact_store.get("forgescaffold.system_catalog.json")
     if not artifact_meta:
         raise RuntimeError("Missing system catalog artifact")
@@ -31,6 +34,7 @@ def load_catalog(artifact_store) -> Dict[str, Any]:
 
 
 def readable_relpath(project_root: Path, target: Path) -> str:
+    """Readable relpath."""
     try:
         return str(target.relative_to(project_root))
     except ValueError:
@@ -38,6 +42,7 @@ def readable_relpath(project_root: Path, target: Path) -> str:
 
 
 def gather_module_sources(project_root: Path, module_units: Dict[str, Dict[str, Any]]) -> Dict[str, List[Path]]:
+    """Gather module sources."""
     sources: Dict[str, List[Path]] = {}
     for module_id, unit in module_units.items():
         paths: Set[Path] = set()
@@ -58,6 +63,7 @@ def gather_module_sources(project_root: Path, module_units: Dict[str, Dict[str, 
 
 
 def extract_imports_from_file(file_path: Path) -> List[Tuple[str, int]]:
+    """Extract imports from file."""
     try:
         tree = ast.parse(file_path.read_text(), filename=str(file_path))
     except (SyntaxError, UnicodeDecodeError):
@@ -78,6 +84,7 @@ def extract_imports_from_file(file_path: Path) -> List[Tuple[str, int]]:
 
 def add_edge(edges: List[Dict[str, Any]], seen: Set[Tuple[str, str, str, str, Optional[int]]],
              from_id: str, to_id: str, edge_type: str, evidence: Dict[str, Any]) -> None:
+    """Add edge."""
     key = (from_id, to_id, edge_type, evidence.get("file", ""), evidence.get("line"))
     if key in seen:
         return
@@ -91,6 +98,7 @@ def add_edge(edges: List[Dict[str, Any]], seen: Set[Tuple[str, str, str, str, Op
 
 
 def match_module(import_name: str, module_ids: Set[str]) -> Optional[str]:
+    """Match module."""
     candidate = import_name
     while candidate:
         if candidate in module_ids:
@@ -102,6 +110,7 @@ def match_module(import_name: str, module_ids: Set[str]) -> Optional[str]:
 
 
 def build_external_index(units: Dict[str, Dict[str, Any]]) -> Dict[str, str]:
+    """Build external index."""
     index: Dict[str, str] = {}
     for unit_id, unit in units.items():
         dep_name = (unit.get("entrypoint") or unit_id).lower()
@@ -112,6 +121,7 @@ def build_external_index(units: Dict[str, Dict[str, Any]]) -> Dict[str, str]:
 
 
 def load_text(file_path: Path) -> str:
+    """Load text."""
     try:
         return file_path.read_text().lower()
     except Exception:
@@ -119,6 +129,7 @@ def load_text(file_path: Path) -> str:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     project_root = Path(project_context["project_root"])
     sandbox = project_context.get("sandbox")
     artifact_store = project_context.get("artifact_store")

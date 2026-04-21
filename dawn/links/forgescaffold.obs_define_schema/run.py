@@ -1,9 +1,11 @@
+"""Emit a unified log envelope schema and observability recommendations"""
 import json
 from pathlib import Path
 from typing import Any, Dict
 
 
 def register_schema(schema_name: str, schema_path: Path) -> None:
+    """Register schema."""
     try:
         from dawn.runtime import schemas as runtime_schemas
     except ImportError:
@@ -22,6 +24,7 @@ def register_schema(schema_name: str, schema_path: Path) -> None:
 
 
 def build_recommendations() -> str:
+    """Build recommendations."""
     return """# ForgeScaffold Observability Recommendations (Phase 2)
 
 These recommendations align the Phase 2 log envelope with common stacks while keeping payloads safe-by-default.
@@ -53,6 +56,7 @@ These recommendations align the Phase 2 log envelope with common stacks while ke
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     if not sandbox:
         raise RuntimeError("Sandbox missing in context")

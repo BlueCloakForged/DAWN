@@ -1,3 +1,4 @@
+"""Executes the package.release_bundle step in the DAWN pipeline."""
 import os
 import zipfile
 import json
@@ -5,6 +6,7 @@ import hashlib
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_root = Path(context["project_root"])
     src_dir = project_root / "src"
     

@@ -1,3 +1,4 @@
+"""Report ForgeScaffold operational status"""
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -42,6 +43,7 @@ def _load_index(index_path: Path) -> List[Dict[str, Any]]:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])
     if not sandbox:

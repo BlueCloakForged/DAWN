@@ -1,8 +1,10 @@
+"""Executes the ingest.generic_handoff step in the DAWN pipeline."""
 import os
 import json
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_id = context["project_id"]
     inputs_dir = Path(context["project_root"]) / "inputs"
     

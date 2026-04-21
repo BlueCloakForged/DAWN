@@ -171,6 +171,7 @@ def build_artifact_tree(artifact_index, pipeline_spec, project_root):
     processed = set()
     
     def add_artifact(art_id, depth=0):
+        """Add artifact."""
         if art_id in processed or art_id not in artifact_index:
             return
         
@@ -229,6 +230,7 @@ def parse_timestamp(ts):
 
 
 def run(context, config):
+    """Run."""
     project_root = Path(context["project_root"])
     artifact_index = context["artifact_index"]
     pipeline_id = context.get("pipeline_id", "unknown")

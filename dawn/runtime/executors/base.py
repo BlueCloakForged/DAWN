@@ -21,10 +21,13 @@ class Executor(Protocol):
         isolation: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None
     ) -> RunResult:
+        """Run pipeline."""
         ...
 
     def get_status(self, project_id: str) -> dict:
+        """Get status."""
         ...
 
     def cancel(self, project_id: str) -> bool:
+        """Cancel."""
         ...

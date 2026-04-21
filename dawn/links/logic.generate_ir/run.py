@@ -1,5 +1,7 @@
+"""Executes the logic.generate_ir step in the DAWN pipeline."""
 
 def run(context, config):
+    """Run."""
     print("Running Stable Link...")
     from pathlib import Path
     blueprint = Path(context['project_root']) / 'inputs' / 'blueprint.json'

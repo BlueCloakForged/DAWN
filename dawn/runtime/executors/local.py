@@ -8,6 +8,7 @@ from ..orchestrator import Orchestrator
 
 class LocalExecutor(Executor):
     def __init__(self, links_dir: str = "dawn/links", projects_dir: str = "projects", **kwargs):
+        """ init ."""
         self.links_dir = links_dir
         self.projects_dir = projects_dir
 
@@ -22,6 +23,7 @@ class LocalExecutor(Executor):
         metadata: Optional[Dict[str, Any]] = None
     ) -> RunResult:
         # Resolve pipeline path if only ID provided
+        """Run pipeline."""
         if not pipeline_path and pipeline_id:
             pipeline_path = f"dawn/pipelines/{pipeline_id}.yaml"
         
@@ -114,7 +116,9 @@ class LocalExecutor(Executor):
 
     def get_status(self, project_id: str) -> dict:
         # Mock for now, could integrate with index reader later
+        """Get status."""
         return {"status": "unknown"}
 
     def cancel(self, project_id: str) -> bool:
+        """Cancel."""
         return False # Stub

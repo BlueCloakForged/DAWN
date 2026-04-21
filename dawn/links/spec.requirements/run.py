@@ -1,3 +1,4 @@
+"""Converts user intent into a schema-enforced, hashed Project Contract."""
 import json
 import hashlib
 from pathlib import Path

@@ -1,3 +1,4 @@
+"""Build deterministic ticket ledger cache"""
 import json
 import sqlite3
 from datetime import datetime
@@ -110,6 +111,7 @@ def _build_db(db_path: Path, events: List[Dict[str, Any]], meta: Dict[str, Any])
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])
     if not sandbox:

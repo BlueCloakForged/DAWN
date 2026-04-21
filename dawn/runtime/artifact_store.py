@@ -1,3 +1,4 @@
+"""Persistent artifact registry and scoped file store for a single project run."""
 import os
 import hashlib
 import json
@@ -6,6 +7,7 @@ from typing import Dict, Any, List, Optional
 
 class ArtifactStore:
     def __init__(self, project_root: str):
+        """ init ."""
         self.project_root = Path(project_root)
         self.artifacts_dir = self.project_root / "artifacts"
         self.artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -91,12 +93,14 @@ class ArtifactStore:
         return list(self._registry.keys())
 
     def get_link_dir(self, link_id: str, is_shadow: bool = False) -> Path:
+        """Get link dir."""
         base = self.shadow_dir if is_shadow else self.artifacts_dir
         link_dir = base / link_id
         link_dir.mkdir(parents=True, exist_ok=True)
         return link_dir
 
     def write_artifact(self, link_id: str, filename: str, content: Any, mode: str = "w") -> Path:
+        """Write artifact."""
         link_dir = self.get_link_dir(link_id)
         file_path = link_dir / filename
         
@@ -124,6 +128,7 @@ class ArtifactStore:
             return f.read()
 
     def get_digest(self, file_path: Path) -> str:
+        """Get digest."""
         sha256_hash = hashlib.sha256()
         with open(file_path, "rb") as f:
             for byte_block in iter(lambda: f.read(4096), b""):
@@ -131,6 +136,7 @@ class ArtifactStore:
         return sha256_hash.hexdigest()
 
     def list_artifacts_for_link(self, link_id: str) -> List[Path]:
+        """List artifacts for link."""
         link_dir = self.artifacts_dir / link_id
         if not link_dir.exists():
             return []

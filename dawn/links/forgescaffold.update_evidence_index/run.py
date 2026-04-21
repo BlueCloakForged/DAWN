@@ -1,3 +1,4 @@
+"""Append evidence index entry for verified runs"""
 import json
 import sys
 from datetime import datetime, timezone
@@ -33,6 +34,7 @@ def _approvers_from_receipt(receipt: Dict[str, Any]) -> List[str]:
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     artifact_store = project_context.get("artifact_store")
     project_root = Path(project_context["project_root"])
     if not artifact_store:

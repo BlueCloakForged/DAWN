@@ -7,6 +7,7 @@ from typing import Dict, Any, List, Protocol
 class ReasoningOrchestrator(Protocol):
     """Protocol for any orchestrator that can execute reasoning."""
     def execute(self, inputs: Dict[str, Any]) -> Any:
+        """Execute."""
         ...
 
 class ShadowExecutor:
@@ -16,6 +17,7 @@ class ShadowExecutor:
     """
     
     def __init__(self, stable: ReasoningOrchestrator, candidate: ReasoningOrchestrator):
+        """ init ."""
         self.stable = stable
         self.candidate = candidate
         
@@ -49,13 +51,16 @@ class PromotionPolicy:
     Manages the Maturity Window for candidate promotion.
     """
     def __init__(self, window_size: int = 10):
+        """ init ."""
         self.window_size = window_size
         self.history: List[bool] = []
         
     def record_run(self, success: bool):
+        """Record run."""
         self.history.append(success)
         
     def is_eligible(self) -> bool:
+        """Is eligible."""
         if len(self.history) < self.window_size:
             return False
         return all(self.history[-self.window_size:])

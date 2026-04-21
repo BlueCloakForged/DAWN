@@ -1,3 +1,4 @@
+"""Coherence-scoring providers that compare IR snapshots to detect structural drift."""
 import abc
 import hashlib
 from typing import Dict, Any, List
@@ -20,6 +21,7 @@ class SimpleStructuralCoherenceProvider(CoherenceProvider):
     In a real system, this would be an LLM-based judge or a vector similarity check.
     """
     def calculate_coherence(self, current_ir: Dict[str, Any], original_intent_ir: Dict[str, Any]) -> Dict[str, Any]:
+        """Calculate coherence."""
         if not current_ir or not original_intent_ir:
             return {"score": 0.0, "evidence": "Missing IR for comparison"}
         
@@ -54,6 +56,7 @@ class MockLLMCoherenceProvider(CoherenceProvider):
     def calculate_coherence(self, current_ir: Dict[str, Any], original_intent_ir: Dict[str, Any]) -> Dict[str, Any]:
         # For demo purposes, we'll hash the current IR and return a stable-ish score
         # In reality, this would call an LLM with the two IRs.
+        """Calculate coherence."""
         ir_str = str(current_ir)
         h = hashlib.md5(ir_str.encode()).hexdigest()
         

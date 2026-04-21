@@ -1,3 +1,4 @@
+"""Executes the thalamus.fuse_context step in the DAWN pipeline."""
 import json
 from pathlib import Path
 

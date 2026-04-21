@@ -1,9 +1,11 @@
+"""CLI tool that renders a DAWN project ledger as a human-readable tabular summary."""
 import json
 import argparse
 from pathlib import Path
 from datetime import datetime
 
 def print_summary(ledger_path: str):
+    """Print summary."""
     path = Path(ledger_path)
     if not path.exists():
         print(f"Error: Ledger file not found at {ledger_path}")

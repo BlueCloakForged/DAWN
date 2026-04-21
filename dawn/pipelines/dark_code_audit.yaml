@@ -1,0 +1,16 @@
+# Dark Code Audit Pipeline
+# Runs both audit links to produce a comprehensive Dark Code Report
+# Usage: python3 -m dawn.runtime.main --project <project> --pipeline dawn/pipelines/dark_code_audit.yaml
+
+apiVersion: dawn.pipelines/v1
+kind: Pipeline
+metadata:
+  name: dark_code_audit
+  description: >
+    Self-audit pipeline that scans the DAWN codebase for 'dark code' —
+    undocumented modules, incomplete contracts, and comprehension gaps.
+    Implements Layers 1-2 of the Dark Code Management Framework.
+spec:
+  links:
+    - audit.dark_code_scan          # Scan modules for missing docs/docstrings
+    - audit.contract_completeness   # Scan link.yaml contracts for missing fields

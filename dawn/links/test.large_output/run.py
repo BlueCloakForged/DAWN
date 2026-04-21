@@ -10,6 +10,7 @@ from pathlib import Path
 
 def run(context, config):
     # Write a 20MB file - should trigger output limit if limit is < 20MB
+    """Run."""
     file_size_mb = 20
     file_size_bytes = file_size_mb * 1024 * 1024
 

@@ -1,3 +1,4 @@
+"""CLI for listing, describing, and validating registered DAWN golden pipelines."""
 import argparse
 import json
 import os
@@ -7,6 +8,7 @@ from pathlib import Path
 MANIFEST_PATH = "dawn/pipelines/pipeline_manifest.json"
 
 def list_pipelines():
+    """List pipelines."""
     if not os.path.exists(MANIFEST_PATH):
         print("Pipeline manifest not found.")
         return
@@ -24,6 +26,7 @@ def list_pipelines():
     print("-" * 80 + "\n")
 
 def describe_pipeline(pipeline_id):
+    """Describe pipeline."""
     if not os.path.exists(MANIFEST_PATH):
         print("Pipeline manifest not found.")
         return None
@@ -89,6 +92,7 @@ def run_pipeline(pipeline_id, project_id, executor_name="local", profile_overrid
         print(f"Errors: {result.errors}")
 
 def main():
+    """Main."""
     parser = argparse.ArgumentParser(description="DAWN Pipelines Library")
     subparsers = parser.add_subparsers(dest="command")
     

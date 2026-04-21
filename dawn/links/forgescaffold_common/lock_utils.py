@@ -8,6 +8,7 @@ import yaml
 
 
 def load_policy(project_root: Path) -> Dict[str, Any]:
+    """Load policy."""
     repo_root = Path(__file__).resolve().parents[3]
     policy_path = repo_root / "dawn" / "policy" / "runtime_policy.yaml"
     if not policy_path.exists():
@@ -18,6 +19,7 @@ def load_policy(project_root: Path) -> Dict[str, Any]:
 
 
 def lock_path_for_project(project_root: Path) -> Path:
+    """Lock path for project."""
     return project_root / ".locks" / "forgescaffold_apply.lock"
 
 
@@ -47,6 +49,7 @@ def acquire_lock(
     ttl_minutes: int,
     force: bool = False,
 ) -> Tuple[bool, Dict[str, Any]]:
+    """Acquire lock."""
     lock_path = lock_path_for_project(project_root)
     lock_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -80,6 +83,7 @@ def acquire_lock(
 
 
 def release_lock(project_root: Path) -> Dict[str, Any]:
+    """Release lock."""
     lock_path = lock_path_for_project(project_root)
     if not lock_path.exists():
         return {"released": False, "reason": "LOCK_MISSING", "lock_path": str(lock_path)}

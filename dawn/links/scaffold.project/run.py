@@ -1,8 +1,10 @@
+"""Creates a deterministic project folder scaffold."""
 import os
 import json
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_root = context["project_root"]
     link_id = "scaffold.project"
     

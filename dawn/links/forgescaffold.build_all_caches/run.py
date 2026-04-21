@@ -1,3 +1,4 @@
+"""Build caches for all projects in the global catalog"""
 import json
 import sqlite3
 from datetime import datetime
@@ -145,6 +146,7 @@ def _build_db(db_path: Path, entries: List[Dict[str, Any]], meta: Dict[str, Any]
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     if not sandbox:
         raise RuntimeError("Sandbox missing")

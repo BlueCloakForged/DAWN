@@ -1,0 +1,29 @@
+apiVersion: dawn.links/v1
+kind: Link
+metadata:
+  name: audit.contract_completeness
+spec:
+  description: >
+    Audits all link.yaml contracts across dawn/links/ for completeness.
+    Checks for missing descriptions, undeclared failure modes, absent retry
+    semantics, and contracts that lack the semantic context required by
+    Layer 2 of the Dark Code Management Framework.
+  requires: []
+  produces:
+    - artifactId: "audit.contract_completeness.report"
+      path: "contract_completeness_report.json"
+      schema:
+        type: "json"
+        ref: "audit.contract_completeness"
+  runtime:
+    timeoutSeconds: 60
+    retries: 0
+  failure_modes:
+    - condition: "dawn/links/ directory not found"
+      behavior: "FAILED with diagnostic"
+      caller_action: "Verify workspace path"
+  steps:
+    - id: run
+      type: executor
+    - id: emit_ledger
+      type: ledger

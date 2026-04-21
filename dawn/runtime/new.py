@@ -1,3 +1,4 @@
+"""CLI tool for scaffolding new DAWN projects from pipeline templates with input stubs."""
 import argparse
 import os
 import yaml

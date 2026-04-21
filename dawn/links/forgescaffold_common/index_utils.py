@@ -5,20 +5,24 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 def canonical_json(payload: Dict[str, Any]) -> str:
+    """Canonical json."""
     return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
 
 def sha256_text(text: str) -> str:
+    """Sha256 text."""
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def compute_entry_hash(entry: Dict[str, Any]) -> str:
+    """Compute entry hash."""
     payload = dict(entry)
     payload.pop("entry_hash", None)
     return sha256_text(canonical_json(payload))
 
 
 def load_index(index_path: Path) -> List[Dict[str, Any]]:
+    """Load index."""
     entries = []
     if not index_path.exists():
         return entries
@@ -29,6 +33,7 @@ def load_index(index_path: Path) -> List[Dict[str, Any]]:
 
 
 def last_entry_hash(index_path: Path) -> Optional[str]:
+    """Last entry hash."""
     entries = load_index(index_path)
     if not entries:
         return None
@@ -36,6 +41,7 @@ def last_entry_hash(index_path: Path) -> Optional[str]:
 
 
 def policy_snapshot_hash(policy: Dict[str, Any]) -> str:
+    """Policy snapshot hash."""
     forgescaffold = policy.get("forgescaffold", {}) if isinstance(policy, dict) else {}
     snapshot = {
         "risk_rules": forgescaffold.get("risk_rules"),
@@ -50,11 +56,13 @@ def policy_snapshot_hash(policy: Dict[str, Any]) -> str:
 
 
 def index_file_sha256(index_path: Path) -> str:
+    """Index file sha256."""
     data = index_path.read_bytes() if index_path.exists() else b""
     return hashlib.sha256(data).hexdigest()
 
 
 def append_index_entry(index_path: Path, entry: Dict[str, Any]) -> Dict[str, Any]:
+    """Append index entry."""
     prev_hash = last_entry_hash(index_path)
     entry["prev_entry_hash"] = prev_hash or "GENESIS"
     entry_hash = compute_entry_hash(entry)
@@ -66,6 +74,7 @@ def append_index_entry(index_path: Path, entry: Dict[str, Any]) -> Dict[str, Any
 
 
 def verify_index_chain(index_path: Path) -> Tuple[bool, Optional[int], Optional[str]]:
+    """Verify index chain."""
     if not index_path.exists():
         return True, None, None
     prev_hash = "GENESIS"

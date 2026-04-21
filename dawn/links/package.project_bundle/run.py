@@ -1,3 +1,4 @@
+"""Generic packaging of project artifacts into a ZIP bundle"""
 import os
 import json
 import zipfile
@@ -5,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 def run(context, config):
+    """Run."""
     project_id = context["project_id"]
     artifacts = context["artifact_index"]
     out_dir = os.path.join(context["project_root"], "artifacts", "package.project_bundle")

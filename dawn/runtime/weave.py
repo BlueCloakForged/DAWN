@@ -1,3 +1,4 @@
+"""Pipeline linter and dependency weaver — validates link existence, artifact flow, and DAG integrity."""
 import argparse
 import yaml
 import os
@@ -7,6 +8,7 @@ from .registry import Registry
 
 class Weaver:
     def __init__(self, links_dir: str):
+        """ init ."""
         self.registry = Registry(links_dir)
         self.registry.discover_links()
 
@@ -154,6 +156,7 @@ class Weaver:
                 base[k] = v
 
     def weave(self, link_ids: List[str], output_path: str = None) -> str:
+        """Weave."""
         links_to_weave = []
         for lid in link_ids:
             meta = self.registry.get_link(lid)
@@ -197,6 +200,7 @@ class Weaver:
         rec_stack = set()
         
         def has_cycle(u):
+            """Has cycle."""
             visited.add(u)
             rec_stack.add(u)
             for v in adj[u]:
@@ -217,6 +221,7 @@ class Weaver:
         visited = set()
         
         def topo_sort(u):
+            """Topo sort."""
             visited.add(u)
             for v in adj[u]:
                 if v not in visited:

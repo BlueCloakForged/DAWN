@@ -1,3 +1,4 @@
+"""Generate a deterministic observability instrumentation patchset"""
 import hashlib
 import json
 from pathlib import Path
@@ -5,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 def register_schema(schema_name: str, schema_path: Path) -> None:
+    """Register schema."""
     try:
         from dawn.runtime import schemas as runtime_schemas
     except ImportError:
@@ -103,6 +105,7 @@ def _detect_entrypoint_patch(file_path: Path, unit_id: str) -> Optional[Dict[str
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     artifact_store = project_context.get("artifact_store")
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])

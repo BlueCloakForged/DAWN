@@ -1,3 +1,4 @@
+"""Append-only JSONL event ledger that records the full execution history of a pipeline run."""
 import json
 import time
 from pathlib import Path
@@ -5,6 +6,7 @@ from typing import Dict, Any, Optional
 
 class Ledger:
     def __init__(self, project_root: str):
+        """ init ."""
         self.project_root = Path(project_root)
         self.ledger_dir = self.project_root / "ledger"
         self.ledger_dir.mkdir(parents=True, exist_ok=True)
@@ -25,6 +27,7 @@ class Ledger:
                   drift_score: Optional[float] = None,
                   drift_metadata: Optional[Dict[str, Any]] = None):
         
+        """Log event."""
         event = {
             "timestamp": time.time(),
             "project_id": project_id,
@@ -46,6 +49,7 @@ class Ledger:
             f.write(json.dumps(event) + "\n")
 
     def get_events(self, link_id: Optional[str] = None) -> list:
+        """Get events."""
         events = []
         if not self.events_file.exists():
             return events

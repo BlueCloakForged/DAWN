@@ -1,3 +1,4 @@
+"""Write a signed checkpoint for the evidence index"""
 import base64
 import json
 import os
@@ -161,6 +162,7 @@ def _should_emit_checkpoint(
 
 
 def run(project_context: Dict[str, Any], link_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run."""
     sandbox = project_context.get("sandbox")
     project_root = Path(project_context["project_root"])
     if not sandbox:
